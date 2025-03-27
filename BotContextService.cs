@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ST10445832_PROG6221_Part1
 {
-    class Program
+    class BotContextService
     {
-        static void Main(string[] args)
-        {
-        }
+        //=========================================================//
+        // Default constructor
+        public BotContextService() { }
     }
 }
 ////////////////////////////////////////////////END OF FILE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
