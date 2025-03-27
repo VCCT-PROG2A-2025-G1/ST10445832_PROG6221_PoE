@@ -10,6 +10,7 @@ namespace ST10445832_PROG6221_Part1
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Hello CI!");
         }
     }
 }
