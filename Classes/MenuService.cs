@@ -207,7 +207,7 @@ namespace ST10445832_PROG6221_Part1
                 Console.Write(">>>");
                 UserName = Console.ReadLine();
             }
-            
+
             Console.CursorVisible = false;
             Console.Clear();
             Console.Write(MenuHeader);
@@ -224,7 +224,7 @@ namespace ST10445832_PROG6221_Part1
         // Plays an audio greeting
         private void StartUpGreeting()
         {
-            
+
             AudioPlayer.SoundLocation = "SecWizTelephone.wav";
 
             try
@@ -295,7 +295,7 @@ namespace ST10445832_PROG6221_Part1
                                   "################################################################################\n" +
                                   "================================================================================\n" +
                                   "################################################################################";
-            
+
             // Display background
             Console.Write(titleBackground);
             // Delay logo write
@@ -369,7 +369,7 @@ namespace ST10445832_PROG6221_Part1
                 {
                     Console.Write($"{UserName}: ");
                     question = Console.ReadLine();
-                }   
+                }
             }
             // prepare the console for the main menu
             Console.Clear();
