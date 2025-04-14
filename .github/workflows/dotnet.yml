@@ -11,7 +11,6 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -20,9 +19,17 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+        
     - name: Restore dependencies
       run: dotnet restore ST10445832_PROG6221_Part1.sln
+      
     - name: Build
       run: dotnet build ST10445832_PROG6221_Part1.sln --no-restore
+      
     - name: Test
       run: dotnet test ST10445832_PROG6221_Part1.sln --no-build --verbosity normal
+      
+      # ChatGPT
+    - name: Check Formatting
+      run: dotnet format --verify-no-changes --severity error
+      # End ChatGPT
