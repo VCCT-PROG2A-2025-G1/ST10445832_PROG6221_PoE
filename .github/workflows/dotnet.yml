@@ -19,7 +19,15 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-        
+
+    # ChatGPT
+    - name: Install NuGet CLI
+      uses: NuGet/setup-nuget@v1
+    
+    - name: Restore Nuget Packages
+      run: nuget restore ST10445832_PROG6221_Part1.sln
+    # End ChatGPT
+    
     - name: Restore dependencies
       run: dotnet restore ST10445832_PROG6221_Part1.sln
       
@@ -31,5 +39,5 @@ jobs:
       
       # ChatGPT
     - name: Check Formatting
-      run: dotnet format --verify-no-changes --severity error
+      run: dotnet format ST10445832_PROG6221_Part1.sln --verify-no-changes --severity error
       # End ChatGPT
