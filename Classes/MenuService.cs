@@ -6,9 +6,7 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Media;
 using System.Text;
 using System.Threading;
@@ -18,13 +16,20 @@ namespace ST10445832_PROG6221_Part1
 {
     class MenuService
     {
+        // Chat bot
         private Bot SecWiz = new Bot();
+        // audio player
         private SoundPlayer AudioPlayer = new SoundPlayer();
+        // flag variable for audio player
         private bool IsPlaying = false;
+        // user's name
         public string UserName;
+        // flag variable for menu loop
         private bool Exit = false;
+        // main menu navigation variables
         private int CursorPosition = 0;
         private string[] MainMenuOptions = { "\rAsk Question", "\rHelp", "\rExit" };
+        // ascii art to display above each menu
         private string MenuHeader = "################################################################################\n" +
                                     "============   _____ ______     _____  __      __    ______   _____ ============\n" +
                                     "############ / ____/ #-----   /  ___/ |  |    |  | /_    _/ /___  / ############\n" +
@@ -39,6 +44,38 @@ namespace ST10445832_PROG6221_Part1
         // Default constructor
         public MenuService() { }
 
+
+        //=========================================================//
+        // Calls:
+        // ConfigureConsole
+        // StartUpGreeting
+        // StartUpAnimation
+        // BuilMainMenuString
+        // Clears the title screen and resets the cursor
+        public void RunStartUpSequence()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            // set console dimensions
+            ConfigureConsole();
+            // start audio greeting
+            StartUpGreeting();
+            // display title screen animation
+            StartUpAnimation();
+            // wait for audio to stop before continuing
+            while (IsPlaying) ;
+            // Clear away the title screen
+            Console.Clear();
+            // Reset the cursor position
+            Console.SetCursorPosition(0, 0);
+            // Request username and clear the console
+            RequestUserName();
+            Console.Clear();
+            // display main menu
+            MainMenu();
+        }
+
+
+        //====================== Menu Methods ======================//
 
         //=========================================================//
         // Displays the main menu and prompts navigation input
@@ -76,6 +113,43 @@ namespace ST10445832_PROG6221_Part1
             }
         }
 
+
+        //=========================================================//
+        // Prompt the user for a question
+        // Answer the question
+        // Until the user indicates they have no more questions
+        private void QuestionLoop(string question)
+        {
+            bool toMain = false;
+
+            while (!toMain)
+            {
+                // get an answer
+                var answer = SecWiz.AnswerQuestion(question);
+                // ...
+                ShowThinking();
+                // display answer
+                Console.WriteLine($"\rSecWiz: {answer}");
+                // allow user to ask another question if the 'exit' answer isn't returned
+                if (answer.Equals("Thanks for chatting!"))
+                {
+                    toMain = true;
+                }
+                else
+                {
+                    Console.Write($"{UserName}: ");
+                    // update question variable with new question
+                    question = Console.ReadLine();
+                }
+            }
+            // prepare the console for the main menu
+            Console.Clear();
+            Console.CursorVisible = false;
+            // go to the main menu
+            MainMenu();
+        }
+
+
         //=========================================================//
         // Displays information to help the user use SecWiz
         private void HelpMenu()
@@ -99,6 +173,8 @@ namespace ST10445832_PROG6221_Part1
             SelectMenuOption("help");
         }
 
+
+        //====================== Menu Control Methods ======================//
 
         //=========================================================//
         // Moves the menu option highlight cursor up
@@ -159,7 +235,7 @@ namespace ST10445832_PROG6221_Part1
                         HelpMenu();
                         break;
                     case 2:
-                        Environment.Exit(0);
+                        Exit = true;
                         break;
                 }
             }
@@ -170,59 +246,7 @@ namespace ST10445832_PROG6221_Part1
         }
 
 
-        //=========================================================//
-        // Calls:
-        // ConfigureConsole
-        // StartUpGreeting
-        // StartUpAnimation
-        // BuilMainMenuString
-        // Clears the title screen and resets the cursor
-        public void RunStartUpSequence()
-        {
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            ConfigureConsole();
-            StartUpGreeting();
-            StartUpAnimation();
-            // wait for audio to stop before continuing
-            while (IsPlaying) ;
-            // Clear away the title screen
-            Console.Clear();
-            // Reset the cursor
-            Console.SetCursorPosition(0, 0);
-            // Request username and clear the console
-            RequestUserName();
-            Console.Clear();
-            MainMenu();
-        }
-
-
-        //=========================================================//
-        // Prompts the user for their name and saves it in memory
-        private void RequestUserName()
-        {
-            Console.Write(MenuHeader);
-            Console.WriteLine("Hello, I'm SecWiz! Before we get started, please enter your name.");
-            Console.CursorVisible = true;
-            Console.Write(">>>");
-            UserName = Console.ReadLine();
-            while (UserName.Trim().Equals(""))
-            {
-                Console.WriteLine("Please enter a valid name.");
-                Console.Write(">>>");
-                UserName = Console.ReadLine();
-            }
-
-            Console.CursorVisible = false;
-            Console.Clear();
-            Console.Write(MenuHeader);
-            Thread.Sleep(500);
-            Console.WriteLine($"Thank you, {UserName}! Let's learn!");
-            Thread.Sleep(1000);
-            Console.Clear();
-            Console.Write(MenuHeader);
-            ShowThinking();
-        }
-
+        //==================== Startup Methods ====================//
 
         //=========================================================//
         // Plays an audio greeting
@@ -399,7 +423,38 @@ namespace ST10445832_PROG6221_Part1
 
 
         //=========================================================//
+        // Prompts the user for their name and saves it in memory
+        private void RequestUserName()
+        {
+            Console.Write(MenuHeader);
+            Console.WriteLine("Hello, I'm SecWiz! Before we get started, please enter your name.");
+            Console.CursorVisible = true;
+            Console.Write(">>>");
+            UserName = Console.ReadLine();
+            while (UserName.Trim().Equals(""))
+            {
+                Console.WriteLine("Please enter a valid name.");
+                Console.Write(">>>");
+                UserName = Console.ReadLine();
+            }
+
+            Console.CursorVisible = false;
+            Console.Clear();
+            Console.Write(MenuHeader);
+            Thread.Sleep(500);
+            Console.WriteLine($"Thank you, {UserName}! Let's learn!");
+            Thread.Sleep(2000);
+            Console.Clear();
+            Console.Write(MenuHeader);
+            ShowThinking();
+        }
+
+
+        //==================== Helper Methods =====================//
+
+        //=========================================================//
         // Prompt user to ask a question
+        // Acts as priming input for question loop
         private string TakeQuestion()
         {
             var menu = "What would you like to know?\n" +
@@ -425,40 +480,6 @@ namespace ST10445832_PROG6221_Part1
                 Console.Write(".");
             }
             Thread.Sleep(400);
-        }
-
-
-        //=========================================================//
-        // Prompt the user for a question
-        // Answer the question
-        // Until the user indicates they have no more questions
-        private void QuestionLoop(string question)
-        {
-            bool toMain = false;
-
-            while (!toMain)
-            {
-                // get an answer
-                var answer = SecWiz.AnswerQuestion(question);
-                // ...
-                ShowThinking();
-                // display answer
-                Console.WriteLine($"\rSecWiz: {answer}");
-                // allow user to ask another question if the 'exit' answer isn't returned
-                if (answer.Equals("Thanks for chatting!"))
-                {
-                    toMain = true;
-                }
-                else
-                {
-                    Console.Write($"{UserName}: ");
-                    question = Console.ReadLine();
-                }
-            }
-            // prepare the console for the main menu
-            Console.Clear();
-            Console.CursorVisible = false;
-            MainMenu();
         }
     }
 }
