@@ -2,11 +2,8 @@
 // https://chatgpt.com
 // https://github.com/JakeBayer/FuzzySharp
 
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FuzzySharp;
 
 namespace ST10445832_PROG6221_Part1
