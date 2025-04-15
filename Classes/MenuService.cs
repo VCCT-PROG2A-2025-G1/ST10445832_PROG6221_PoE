@@ -201,7 +201,7 @@ namespace ST10445832_PROG6221_Part1
         private void RequestUserName()
         {
             Console.Write(MenuHeader);
-            Console.WriteLine("Hello, and welcome to SecWiz! Before we get started, please enter your name.");
+            Console.WriteLine("Hello, I'm SecWiz! Before we get started, please enter your name.");
             Console.CursorVisible = true;
             Console.Write(">>>");
             UserName = Console.ReadLine();
@@ -216,7 +216,7 @@ namespace ST10445832_PROG6221_Part1
             Console.Clear();
             Console.Write(MenuHeader);
             Thread.Sleep(500);
-            Console.WriteLine($"Thank you, {UserName}!");
+            Console.WriteLine($"Thank you, {UserName}! Let's learn!");
             Thread.Sleep(1000);
             Console.Clear();
             Console.Write(MenuHeader);
