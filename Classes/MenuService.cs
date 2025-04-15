@@ -381,7 +381,7 @@ namespace ST10445832_PROG6221_Part1
                 Console.SetCursorPosition(12, (i + 6));
                 Console.Write(titleRows[i]);
             }
-            
+
             Thread.Sleep(200);
             Console.Clear();
             // after logo has been displayed, glitch!
