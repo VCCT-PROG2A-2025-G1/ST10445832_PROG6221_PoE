@@ -157,6 +157,17 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("What should kids know about internet safety?", "They should know not to share personal info, to ask for help if something feels wrong, and to be respectful online.");
             QnA.Add("How can I teach my kids about cybersecurity?", "Use games, videos, and apps designed for online safety education. Lead by example.");
 
+            // Safe Browsing
+            QnA.Add("What is safe browsing?", "Safe browsing means using the internet cautiously by avoiding suspicious links, ensuring websites are secure, and keeping software up to date.");
+            QnA.Add("How can I identify a phishing website?", "Look for spelling errors, suspicious URLs, lack of HTTPS, and requests for personal information.");
+            QnA.Add("Should I click on pop-up ads or unknown links?", "No, avoid clicking on pop-ups or unknown links as they may contain malware or lead to phishing sites.");
+            QnA.Add("Why is it important to keep my browser updated?", "Browser updates fix security vulnerabilities and help protect against the latest online threats.");
+            QnA.Add("Can I use public Wi-Fi for work-related tasks?", "Avoid using public Wi-Fi for sensitive tasks unless you're connected through a secure VPN.");
+            QnA.Add("What should I do if I accidentally visit a suspicious site?", "Close the site immediately, clear your browser cache, and report the incident to your IT department.");
+            QnA.Add("Is it safe to save passwords in my browser?", "It's better to use a trusted password manager; browser-stored passwords can be vulnerable.");
+            QnA.Add("What is HTTPS and why does it matter?", "HTTPS encrypts your connection to a website, helping protect your data from interception.");
+            QnA.Add("How do I know if a website is secure?", "Look for HTTPS in the URL and a padlock icon next to the address bar.");
+
             // Workplace Security
             QnA.Add("What is a security policy?", "A security policy outlines rules and procedures for protecting digital and physical assets.");
             QnA.Add("What is acceptable use?", "Acceptable use refers to policies that define how employees can use company systems and data.");
