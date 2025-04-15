@@ -1,4 +1,5 @@
 ﻿// References
+// https://chatgpt.com
 // https://github.com/JakeBayer/FuzzySharp
 
 using System;
@@ -195,7 +196,7 @@ namespace ST10445832_PROG6221_Part1
             foreach (string question in QnA.Keys)
             {
                 // compare the question to questions which have answers, ignoring the order of the words in the question
-                var score = Fuzz.TokenSortRatio(userQuestion, question);
+                var score = Fuzz.TokenSortRatio(userQuestion.ToLower(), question.ToLower());
                 // only provide a non-default answer if the similarity score is higher than 60
                 if (score > 60 && score > fuzzMax)
                 {
