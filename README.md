@@ -2,8 +2,8 @@
 
 ## Running SecWiz
 ### Requirements
-Microsoft Visual Studio
-Nuget Package: FuzzySharp 2.0.2 by Jacob Bayer
+- Microsoft Visual Studio
+- Nuget Package: FuzzySharp 2.0.2 by Jacob Bayer
 
 
 ## SecWiz Usage
@@ -13,13 +13,13 @@ Highlight the menu optionn you would like to select using __ArrowUp__ and __Arro
 Use __Enter__ to select the highlighted option.
 
 ### Ask Question
-After selecting _Ask Question_ in the main menu you will be prompted to ask a question.
-Any question you ask will be compared to answerable questions using fuzzy string matching.
+- After selecting _Ask Question_ in the main menu you will be prompted to ask a question.
+- Any question you ask will be compared to answerable questions using fuzzy string matching.
 
-You can enter prompts such as _No more Questions_, _Goodbye_, _Back_, and _Exit_, to return to the __main menu__.
+- You can enter prompts such as _No more Questions_, _Goodbye_, _Back_, and _Exit_, to return to the __main menu__.
 
 ### Help
-The help option in the main menu provides you with some information about SecWiz and how to use it.
+- The help option in the main menu provides you with some information about SecWiz and how to use it.
 
 ### Exit
-Exit does what it says - it closes the application.
+- Exit does what it says - it closes the application.
