@@ -1,13 +1,18 @@
 ﻿// References
+// https://www.asciiart.eu/image-to-ascii
+// https://www.asciiart.eu/text-to-ascii-art
 // https://chatgpt.com/
+// https://gemini.google.com/
 // https://learn.microsoft.com/en-us/dotnet/api/system.console.readkey?view=net-9.0
 // https://learn.microsoft.com/en-us/dotnet/api/system.consolekey?view=net-9.0
 // https://learn.microsoft.com/en-us/dotnet/api/system.media.soundplayer?view=windowsdesktop-9.0
 
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,15 +35,76 @@ namespace ST10445832_PROG6221_Part1
         private int CursorPosition = 0;
         private string[] MainMenuOptions = { "\rAsk Question", "\rHelp", "\rExit" };
         // ascii art to display above each menu
-        private string MenuHeader = "################################################################################\n" +
-                                    "============   _____ ______     _____  __      __    ______   _____ ============\n" +
-                                    "############ / ____/ #-----   /  ___/ |  |    |  | /_    _/ /___  / ############\n" +
-                                    "============ \\__  \\  #_____  |  /     |  |_/\\_|  |   |  |     /  /  ============\n" +
-                                    "############ ___/ /  #_____  |  \\___  \\    /\\    /  _|  |_   /  /__ ############\n" +
-                                    "============/____/   #-----   \\____/   \\__/  \\__/  /_____/  /_____/ ============\n" +
-                                    "############                                                        ############\n" +
-                                    "================================================================================\n" +
-                                    "################################################################################\n\n";
+        private string[] MenuHeaderText =
+        {
+            " ____          __        ___     ",
+            "/ ___|  ___  __\\ \\      / (_)____",
+            "\\___ \\ / _ \\/ __\\ \\ /\\ / /| |_  /",
+            " ___) |  __/ (__ \\ V  V / | |/ / ",
+            "|____/ \\___|\\___| \\_/\\_/  |_/___|"
+        };
+
+        private string MenuHeader;
+
+        private string logo =
+            "###############################################################################" +
+            "\n############################++++++++++++++++++++++++++#########################" +
+            "\n#########################+++++++++++#######++++---------#######################" +
+            "\n########################++++++++++####+++####------------######################" +
+            "\n######################+++++++++++###+++----+##-----------######################" +
+            "\n######################+++++++++++##++-------##-----------######################" +
+            "\n######################+++++++++++##---------##-----------######################" +
+            "\n######################+++++++++++++++++++++++++----------######################" +
+            "\n######################++++++++++###############+---------######################" +
+            "\n######################++++++++-+##+###+-+###+##+---------######################" +
+            "\n######################+++++++--+######+-+######+---------######################" +
+            "\n######################+++++++---###+###-###+###----------######################" +
+            "\n######################++++++----+#############+----------######################" +
+            "\n######################++++++------#####+#####------------######################" +
+            "\n######################+++++---------#######--------------######################" +
+            "\n#######################++-------------------------------#######################" +
+            "\n#########################+----------------------------#########################" +
+            "\n#################################---------++###################################" +
+            "\n#################################-------+######################################" +
+            "\n#################################-----+########################################" +
+            "\n#################################---+##########################################" +
+            "\n#################################-#############################################" +
+            "\n###############################################################################" ;
+
+
+        private string[] ChatBtnArr =
+        {
+            "                  ",
+            " ================ ",
+            " =     CHAT     = ",
+            " ================ ",
+            "                  "
+        };
+
+        private string[] HelpBtnArr =
+        {
+            "                  ",
+            " ================ ",
+            " =     HELP     = ",
+            " ================ ",
+            "                  "
+        };
+
+        private string[] ExitBtnArr =
+        {
+            "                  ",
+            " ================ ",
+            " =     EXIT     = ",
+            " ================ ",
+            "                  "
+        };
+
+        private string MenuButtons =
+            "    ==================        ==================        ==================\n" +
+            "    =                =        =                =        =                =\n" +
+            "    =      CHAT      =        =      HELP      =        =      EXIT      =\n" +
+            "    =                =        =                =        =                =\n" +
+            "    ==================        ==================        ==================";
 
         //=========================================================//
         // Default constructor
@@ -57,6 +123,8 @@ namespace ST10445832_PROG6221_Part1
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             // set console dimensions
             ConfigureConsole();
+            // build menu header
+            CreateMenuHeader();
             // start audio greeting
             StartUpGreeting();
             // display title screen animation
@@ -81,30 +149,29 @@ namespace ST10445832_PROG6221_Part1
         // Displays the main menu and prompts navigation input
         private void MainMenu()
         {
-            var menu = "Ask Question\n" +
-                       "Help\n" +
-                       "Exit";
-
+            // show header
             Console.Write(MenuHeader);
-            Console.Write(menu);
-            DrawCursor("main");
+            // show menu options
+            Console.Write(MenuButtons);
+            // highlight first button
+            DrawMenuButtons();
 
             while (!Exit)
             {
                 var inputKey = Console.ReadKey(true);
-                if (inputKey.Key == ConsoleKey.UpArrow)
+                if (inputKey.Key == ConsoleKey.LeftArrow)
                 {
                     // move cursor position
-                    MoveCursorUp();
+                    MoveCursorLeft();
                     // highlight menu option
-                    DrawCursor("main");
+                    DrawMenuButtons();
                 }
-                else if (inputKey.Key == ConsoleKey.DownArrow)
+                else if (inputKey.Key == ConsoleKey.RightArrow)
                 {
                     // move cursor position
-                    MoveCursorDown();
+                    MoveCursorRight();
                     // highlight menu option
-                    DrawCursor("main");
+                    DrawMenuButtons();
                 }
                 else if (inputKey.Key == ConsoleKey.Enter)
                 {
@@ -154,6 +221,7 @@ namespace ST10445832_PROG6221_Part1
         // Displays information to help the user use SecWiz
         private void HelpMenu()
         {
+            Console.Clear();
             Console.Write(MenuHeader);
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Main Menu");
@@ -162,8 +230,8 @@ namespace ST10445832_PROG6221_Part1
             sb.AppendLine("\tExit: closes the application");
             sb.AppendLine();
             sb.AppendLine("Ask Question");
-            sb.AppendLine("\tType any question you have, when prompted, and SecWiz will try to answer you.");
-            sb.AppendLine("\tTo return to the main menu, enter exit, quit, goodbye, or no more questions.");
+            sb.AppendLine("\tType any question you have, when prompted, and SecWiz will\n\ttry to answer you.");
+            sb.AppendLine("\tTo return to the main menu, enter exit, quit, goodbye, or \n\tno more questions.");
             sb.AppendLine();
             sb.AppendLine("Press any key to return to the main menu...");
             Console.WriteLine(sb.ToString());
@@ -177,46 +245,76 @@ namespace ST10445832_PROG6221_Part1
         //====================== Menu Control Methods ======================//
 
         //=========================================================//
-        // Moves the menu option highlight cursor up
-        private void MoveCursorUp()
+        // Moves the menu option highlight cursor left
+        private void MoveCursorLeft()
         {
             if (CursorPosition < 3 && CursorPosition > 0)
             {
-                // Reset currently highlighted option
-                Console.Write(MainMenuOptions[CursorPosition]);
                 CursorPosition--;
             }
         }
 
 
         //=========================================================//
-        // Moves the menu option highlight cursor down
-        private void MoveCursorDown()
+        // Moves the menu option highlight cursor right
+        private void MoveCursorRight()
         {
             if (CursorPosition >= 0 && CursorPosition < 2)
             {
-                Console.Write(MainMenuOptions[CursorPosition]);
                 CursorPosition++;
             }
         }
 
 
         //=========================================================//
-        // Draws the menu option highlight cursor
-        private void DrawCursor(string menuName)
+        // Highlights button 1 2 or 3 based on CursorPosition field
+        private void DrawMenuButtons()
         {
-            switch (menuName)
+            // ChatBtn Coordinates X: 4 - 21, Y: 9 - 13
+            // HelpBtn Coordinates X: 30 - 47, Y: 9 - 13
+            // ExitBtn Coordinates X: 56 - 73, Y: 9 - 13
+
+            // Reset highlight
+            Console.SetCursorPosition(0, 9);
+            Console.Write(MenuButtons);
+
+            // highlight button for user to select
+            // set highlight colours
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.Black;
+            if (CursorPosition == 0)
             {
-                case "main":
-                    Console.SetCursorPosition(0, (10 + CursorPosition));
-                    Console.BackgroundColor = ConsoleColor.White;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.Write(MainMenuOptions[CursorPosition]);
-                    // reset the console colour
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    break;
+                int row = 0;
+                foreach (string line in ChatBtnArr)
+                {
+                    Console.SetCursorPosition(4, 9 + row);
+                    Console.Write(line);
+                    row++;
+                }
             }
+            else if (CursorPosition == 1)
+            {
+                int row = 0;
+                foreach (string line in HelpBtnArr)
+                {
+                    Console.SetCursorPosition(30, 9 + row);
+                    Console.Write(line);
+                    row++;
+                }
+            }
+            else
+            {
+                int row = 0;
+                foreach (string line in ExitBtnArr)
+                {
+                    Console.SetCursorPosition(56, 9 + row);
+                    Console.Write(line);
+                    row++;
+                }
+            }
+            // Reset the colours
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.BackgroundColor = ConsoleColor.Black;
         }
 
 
@@ -279,8 +377,28 @@ namespace ST10445832_PROG6221_Part1
         private void ConfigureConsole()
         {
             Console.CursorVisible = false;
-            Console.SetWindowSize(81, 20);
-            Console.SetBufferSize(81, 20);
+            Console.SetWindowSize(79, 23);
+            Console.SetBufferSize(79, 23);
+        }
+
+
+        private void CreateMenuHeader()
+        {
+            int width = Console.WindowWidth;
+            // ChatGPT
+            int paddingWidth = (width - MenuHeaderText[0].Length) / 2; // all line are equal length
+            var padding = new string(' ', paddingWidth);
+            // End ChatGPT
+
+            // add top border
+            MenuHeader += new string('#', width);
+            foreach (string line in MenuHeaderText)
+            {
+                
+                MenuHeader += $"{padding}{line}{padding}\n";
+            }
+            // add bottom border
+            MenuHeader += "\n" + new string('#', width) + "\n\n";
         }
 
 
@@ -296,6 +414,15 @@ namespace ST10445832_PROG6221_Part1
               /____/   #-----   \____/   \__/  \__/  /_____/  /_____/
              
              */
+
+            /*
+             ____          __        ___     
+            / ___|  ___  __\ \      / (_)____
+            \___ \ / _ \/ __\ \ /\ / /| |_  /
+             ___) |  __/ (__ \ V  V / | |/ / 
+            |____/ \___|\___| \_/\_/  |_/___|
+
+            */
             var titleRowOne = "   _____ ______     _____  __      __    ______   _____";
             var titleRowTwo = " / ____/ #-----   /  ___/ |  |    |  | /_    _/ /___  /";
             var titleRowThree = " \\__  \\  #_____  |  /     |  |_/\\_|  |   |  |     /  /\n";
@@ -390,35 +517,36 @@ namespace ST10445832_PROG6221_Part1
                                   "================================================================================\n" +
                                   "################################################################################";
 
-            // Display background
-            Console.Write(titleBackground);
-            // Delay logo write
-            Thread.Sleep(100);
-            // Set cursor position to prefare for first line of logo
-            Console.SetCursorPosition(12, 6);
-            // Write first line of logo
-            Console.Write(titleRowOne);
-            // Repeat
-            for (int i = 1; i < titleRows.Length; i++)
-            {
-                Thread.Sleep(200);
-                Console.SetCursorPosition(12, (i + 6));
-                Console.Write(titleRows[i]);
-            }
-
-            Thread.Sleep(200);
-            Console.Clear();
-            // after logo has been displayed, glitch!
-            // first glitch stage
-            Console.Write(titleBackgroundGlitch1);
-            Thread.Sleep(200);
-            Console.Clear();
-            // second glitch stage
-            Console.Write(titleBackgroundGlitch2);
-            Thread.Sleep(200);
-            Console.Clear();
+            //// Display background
+            //Console.Write(titleBackground);
+            //// Delay logo write
+            //Thread.Sleep(100);
+            //// Set cursor position to prefare for first line of logo
+            //Console.SetCursorPosition(12, 6);
+            //// Write first line of logo
+            //Console.Write(titleRowOne);
+            //// Repeat
+            //for (int i = 1; i < titleRows.Length; i++)
+            //{
+            //    Thread.Sleep(200);
+            //    Console.SetCursorPosition(12, (i + 6));
+            //    Console.Write(titleRows[i]);
+            //}
+            //
+            //Thread.Sleep(200);
+            //Console.Clear();
+            //// after logo has been displayed, glitch!
+            //// first glitch stage
+            //Console.Write(titleBackgroundGlitch1);
+            //Thread.Sleep(200);
+            //Console.Clear();
+            //// second glitch stage
+            //Console.Write(titleBackgroundGlitch2);
+            //Thread.Sleep(200);
+            //Console.Clear();
             // return to normal
-            Console.Write(titleBackgroundComplete);
+            Console.Write(logo);
+            Thread.Sleep(4000);
         }
 
 
@@ -441,12 +569,14 @@ namespace ST10445832_PROG6221_Part1
             Console.CursorVisible = false;
             Console.Clear();
             Console.Write(MenuHeader);
-            Thread.Sleep(500);
-            Console.WriteLine($"Thank you, {UserName}! Let's learn!");
-            Thread.Sleep(2000);
+            ShowThinking();
+            Console.WriteLine($"\rThank you, {UserName}! Let's learn!");
+            ShowThinking();
+            Console.WriteLine("\rUse the LEFT and RIGHT arrow keys to navigate the main menu.");
+            Console.WriteLine("Press any key to continue to the main menu...");
+            Console.ReadKey(true);
             Console.Clear();
             Console.Write(MenuHeader);
-            ShowThinking();
         }
 
 
