@@ -136,6 +136,7 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("What is personal data?", "Personal data is information that can identify a person, such as name, ID number, or email address.");
             QnA.Add("What is GDPR?", "The General Data Protection Regulation (GDPR) is a European law that protects personal data and privacy.");
             QnA.Add("What is POPIA?", "The Protection of Personal Information Act (POPIA) is South African legislation protecting personal information.");
+            QnA.Add("What is the POPI Act?", "The Protection of Personal Information Act (POPIA) is South African legislation protecting personal information.");
             QnA.Add("How can I protect my privacy online?", "Limit what you share, use privacy settings, avoid oversharing on social media, and consider using VPNs and private browsers.");
 
             // Incident Response & Reporting
@@ -188,6 +189,7 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("Bye", "Thanks for chatting!");
             QnA.Add("Back", "Thanks for chatting!");
             QnA.Add("Exit", "Thanks for chatting!");
+            QnA.Add("Main menu", "Thanks for chatting!");
         }
 
 
