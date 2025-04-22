@@ -69,7 +69,7 @@ namespace ST10445832_PROG6221_Part1
             "\n#################################-----+########################################" +
             "\n#################################---+##########################################" +
             "\n#################################-#############################################" +
-            "\n###############################################################################" ;
+            "\n###############################################################################";
 
 
         private string[] ChatBtnArr =
@@ -397,7 +397,7 @@ namespace ST10445832_PROG6221_Part1
             MenuHeader += new string('#', width);
             foreach (string line in MenuHeaderText)
             {
-                
+
                 MenuHeader += $"{padding}{line}{padding}\n";
             }
             // add bottom border
@@ -487,7 +487,7 @@ namespace ST10445832_PROG6221_Part1
         private void TypeMessage(string message)
         {
             string[] messageArr = message.Split(' ');
-            foreach( string word in messageArr)
+            foreach (string word in messageArr)
             {
                 Console.Write($"{word} ");
                 Thread.Sleep(word.Length * 50);
