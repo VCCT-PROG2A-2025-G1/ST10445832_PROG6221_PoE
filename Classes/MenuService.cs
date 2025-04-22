@@ -275,12 +275,12 @@ namespace ST10445832_PROG6221_Part1
         // Highlights button 1 2 or 3 based on CursorPosition field
         private void DrawMenuButtons()
         {
-            // ChatBtn Coordinates X: 4 - 21, Y: 9 - 13
-            // HelpBtn Coordinates X: 30 - 47, Y: 9 - 13
-            // ExitBtn Coordinates X: 56 - 73, Y: 9 - 13
+            // ChatBtn Coordinates X: 4 - 21, Y: 10 - 14
+            // HelpBtn Coordinates X: 30 - 47, Y: 10 - 14
+            // ExitBtn Coordinates X: 56 - 73, Y: 10 - 14
 
             // Reset highlight
-            Console.SetCursorPosition(0, 9);
+            Console.SetCursorPosition(0, 10);
             Console.Write(MenuButtons);
 
             // highlight button for user to select
@@ -292,7 +292,7 @@ namespace ST10445832_PROG6221_Part1
                 int row = 0;
                 foreach (string line in ChatBtnArr)
                 {
-                    Console.SetCursorPosition(4, 9 + row);
+                    Console.SetCursorPosition(4, 10 + row);
                     Console.Write(line);
                     row++;
                 }
@@ -302,7 +302,7 @@ namespace ST10445832_PROG6221_Part1
                 int row = 0;
                 foreach (string line in HelpBtnArr)
                 {
-                    Console.SetCursorPosition(30, 9 + row);
+                    Console.SetCursorPosition(30, 10 + row);
                     Console.Write(line);
                     row++;
                 }
@@ -312,7 +312,7 @@ namespace ST10445832_PROG6221_Part1
                 int row = 0;
                 foreach (string line in ExitBtnArr)
                 {
-                    Console.SetCursorPosition(56, 9 + row);
+                    Console.SetCursorPosition(56, 10 + row);
                     Console.Write(line);
                     row++;
                 }
@@ -387,9 +387,12 @@ namespace ST10445832_PROG6221_Part1
         }
 
 
+        //=========================================================//
+        // Build menu header with centered ascii art and menu title
+        // for user orientation
         private void CreateMenuHeader(string menuName)
         {
-            MenuHeader = "";
+            StringBuilder sb = new StringBuilder();
             int width = Console.WindowWidth;
             // ChatGPT
             int paddingWidth = (width - MenuHeaderText[0].Length) / 2; // all lines are equal length
@@ -397,17 +400,17 @@ namespace ST10445832_PROG6221_Part1
             // End ChatGPT
 
             // add top border
-            MenuHeader += new string('#', width) + "\n\n";
+            sb.AppendLine(new string('#', width));
+            sb.AppendLine();
             foreach (string line in MenuHeaderText)
             {
-
-                MenuHeader += $"{padding}{line}{padding}\n";
+                sb.AppendLine($"{padding}{line}{padding}");
             }
-
+            sb.AppendLine();
             // add bottom border
             if (menuName == "")
             {
-                MenuHeader += "\n" + new string('#', width) + "\n\n";
+                sb.AppendLine(new string('#', width));
             }
             else
             {
@@ -418,9 +421,10 @@ namespace ST10445832_PROG6221_Part1
                 {
                     border += "#";
                 }
-                MenuHeader += $"\n{border}\n\n";
+                sb.AppendLine($"{border}");
             }
-
+            sb.AppendLine();
+            MenuHeader = sb.ToString();
         }
 
 
