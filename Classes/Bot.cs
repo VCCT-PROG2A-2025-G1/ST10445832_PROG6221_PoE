@@ -41,8 +41,35 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("What's your purpose?", "I'm here to educate users on matters relating to cyber security and online safety.");
             QnA.Add("Thank you", $"My pleasure, {UserName}. Is there anything else you would like to know?");
 
-
             // CHATGPT
+            QnA.Add("That email looked real—how was I supposed to know it was fake?", "Phishing emails often look legit, but small details like the sender's email address, weird grammar, or urgent demands can give them away. When in doubt, don’t click.");
+            QnA.Add("Is it okay to open links if I don’t click on anything else?", "Even just clicking a suspicious link can be risky. It’s best to avoid them unless you're sure they’re safe.");
+            QnA.Add("Do I really need different passwords for every site?", "Yep—it’s a pain, but using the same password everywhere is super risky. A password manager can help keep things organized.");
+            QnA.Add("I forgot my password again! Is it bad to keep it written down?", "Writing it down isn't ideal, but if you must, keep it in a secure place. Better yet, use a password manager.");
+            QnA.Add("Is it really that easy to get hacked?", "Unfortunately, yes—especially if your guard’s down. Even one wrong click can be all it takes.");
+            QnA.Add("I'm not tech-savvy. How do I know if something's a threat?", "You don’t have to be an expert—just stay skeptical of unexpected emails, weird links, and too-good-to-be-true offers. When unsure, ask or do a quick search.");
+            QnA.Add("if I get ransomware, all my stuff is gone?", "Unless you have a backup, pretty much. That’s why backing up your files is super important.");
+            QnA.Add("Can I just unplug my computer if I think I got a virus?", "Actually, yes! Turning off the internet or shutting it down can help stop malware from spreading further.");
+            QnA.Add("Is it fine to check my bank account on airport Wi-Fi?", "It’s not recommended. Public Wi-Fi can be sketchy. If you must, use a VPN to be safer.");
+            QnA.Add("Do I really need a VPN?", "If you care about privacy—especially on public networks—then yes, it’s a good idea.");
+            QnA.Add("Why would anyone want to hack me?", "Hackers don’t always target people specifically. Sometimes it’s just about grabbing whatever info they can get.");
+            QnA.Add("What’s one thing I can do today to be safer online?", "Start by enabling two-factor authentication wherever you can. It’s a simple move with a big impact.");
+            QnA.Add("That message said I won a prize—should I believe it?", "Probably not. If you didn’t enter a contest, it’s most likely a scam. Don’t click anything or give out info.");
+            QnA.Add("Someone just DMed me asking for money—what should I do?", "Be cautious. Scammers often pretend to be friends or family. Double-check with the person directly if you're unsure.");
+            QnA.Add("How do I know if a website is safe to use?", "Look for 'https://' in the address bar and a padlock icon. If the site looks off or asks for weird info, trust your gut and leave.");
+            QnA.Add("Do I really need to update my phone all the time?", "Yes! Updates fix security holes that hackers can exploit. It’s worth the few minutes it takes.");
+            QnA.Add("Is it bad to download apps from outside the App Store?", "It can be. Apps from unknown sources might carry malware. Stick to official stores when possible.");
+            QnA.Add("My computer’s acting weird—should I be worried?", "Possibly. It could be malware or just a glitch. Run a scan with your antivirus to be safe.");
+            QnA.Add("Is it okay to post vacation pics while I’m away?", "Better to wait until you’re back. Posting in real-time can let people know your home is empty.");
+            QnA.Add("Can people really find me just from my social media?", "Yep. Even small details can give away your location, habits, or identity. Be mindful of what you share.");
+            QnA.Add("Should I accept friend requests from strangers?", "Probably not. Some accounts are fake and just trying to collect your info or scam you.");
+            QnA.Add("Do I need to log out of accounts every time?", "It’s a good habit, especially on shared or public devices. It keeps your info safer.");
+            QnA.Add("How often should I change my passwords?", "Every few months is a good rule. Or immediately if you think an account has been compromised.");
+            QnA.Add("Is clicking 'Remember Me' on websites a bad idea?", "It's convenient, but it can be risky on public or shared devices. Only use it on your personal, secure devices.");
+            QnA.Add("Is cybersecurity just for people who work in tech?", "Nope! Everyone who uses the internet should care. Hackers go after regular users all the time.");
+            QnA.Add("What’s the worst that could happen if I get hacked?", "You could lose money, have your identity stolen, or your private info leaked. It’s more common than you’d think.");
+            QnA.Add("Are smart home devices safe?", "They can be, but make sure they’re updated regularly and protected with strong passwords. Don’t ignore those security settings.");
+
             // Online Safety
             QnA.Add("What threats exist online?", "There are many threats to be aware of online. Some of the most prevalent are:\nData Breaches\nMalware\nViruses\nPhishing\nRomance Scams\nIdentity Theft.\nYou can ask me about them if you want to learn more!");
             QnA.Add("How can I stay safe online?", "Think before clicking, use strong passwords, keep software updated, be wary of sharing personal information, and use security software.");
@@ -51,6 +78,8 @@ namespace ST10445832_PROG6221_Part1
             // Data Breaches & Personal Information
             QnA.Add("What is a data breach?", "A data breach is the unauthorized access, disclosure, or loss of sensitive information.");
             QnA.Add("Am I safe from data breaches?", "You can't be completely safe from data breaches. However, being careful about who you give information to online can help reduce your risk in the event of data breaches.");
+            QnA.Add("What should I do if my data has been breached?", "Change your passwords, monitor accounts for suspicious activity, enable two-factor authentication, and consider credit monitoring services.");
+            QnA.Add("How can I know if I've been affected by a data breach?", "Check websites like HaveIBeenPwned.com or watch for breach notifications from companies you use.");
             QnA.Add("How do I know if my data is exposed?", "Using a website like https://haveibeenpwned.com/ can help you know if your email or password has been compromised.");
             QnA.Add("Can I check if my data is safe?", "Using a website like https://haveibeenpwned.com/ can help you know if your email or password has been compromised.");
             QnA.Add("Have I been exposed online?", "Using a website like https://haveibeenpwned.com/ can help you know if your email or password has been compromised.");
@@ -58,17 +87,26 @@ namespace ST10445832_PROG6221_Part1
 
             // Malware, Viruses & Threats
             QnA.Add("What is malware?", "Malware is malicious software designed to harm computer systems.");
+            QnA.Add("What are common types of malware?", "Common types include viruses, worms, trojans, ransomware, spyware, and adware.");
+            QnA.Add("How does malware get onto my computer?", "Malware can be downloaded through malicious websites, email attachments, software from untrusted sources, or USB drives.");
+            QnA.Add("What are signs my device might be infected with malware?", "Slow performance, frequent crashes, unexpected pop-ups, unknown programs launching, or unusual network activity.");
             QnA.Add("What can I do to be safe from malware?", "Install anti-malware software on your devices and schedule regular scans. Be careful of suspicious links and avoid clicking on them.");
             QnA.Add("How do I defend against malware?", "Install anti-malware software on your devices and schedule regular scans. Be careful of suspicious links and avoid clicking on them.");
             QnA.Add("What is a virus?", "A computer virus is a type of malware that replicates and spreads by attaching itself to other programs.");
             QnA.Add("What are viruses?", "A computer virus is a type of malware that replicates and spreads by attaching itself to other programs.");
             QnA.Add("How can I be safe frome viruses?", "Install anti-virus software on your devices and schedule regular scans. Be careful of suspicious links and avoid clicking on them.");
             QnA.Add("How do I defend against viruses?", "Install anti-virus software on your devices and schedule regular scans. Be careful of suspicious links and avoid clicking on them.");
+            QnA.Add("Is antivirus software enough to keep me safe?", "Antivirus helps, but it's not foolproof. You should also practice good security habits and keep your system updated.");
+            QnA.Add("Do I need antivirus on my phone?", "Yes, especially on Android devices, as they can be vulnerable to malicious apps and websites.");
+
 
             // Phishing & Scams
             QnA.Add("What is a phishing attack?", "A phishing attack is a deceptive attempt to steal sensitive information by impersonating a trustworthy entity.");
             QnA.Add("What are phising attacks?", "A phishing attack is a deceptive attempt to steal sensitive information by impersonating a trustworthy entity.");
             QnA.Add("What is phishing?", "A phishing attack is a deceptive attempt to steal sensitive information by impersonating a trustworthy entity.");
+            QnA.Add("How can I recognize a phishing email?", "Look for suspicious sender addresses, generic greetings, grammatical errors, urgent language, and unexpected attachments or links.");
+            QnA.Add("What should I do if I clicked on a phishing link?", "Disconnect from the internet, run a malware scan, change your passwords, and report the incident to your IT department or email provider.");
+            QnA.Add("Are phishing attacks only done via email?", "No, phishing can occur via text messages (smishing), phone calls (vishing), and even social media messages.");
             QnA.Add("What is spear phishing?", "Spear phishing is a targeted phishing attack aimed at a specific individual or organization.");
             QnA.Add("What is whaling?", "Whaling is a phishing attack targeting high-profile individuals like executives.");
             QnA.Add("What is a romance scam?", "A romance scam is a deceptive online relationship used to manipulate someone into sending money or personal information.");
@@ -88,6 +126,7 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("What is a VPN?", "VPN stands for Virtual Private Network. It's a service that creates a secure, encrypted connection over the internet between your device and a remote server, helping to protect your online privacy and data.");
             QnA.Add("What is a virtual private network?", "A virtual private network, or VPN, is a service that creates a secure, encrypted connection over the internet between your device and a remote server, helping to protect your online privacy and data.");
             QnA.Add("Why is it important to use a VPN?", "A VPN encrypts your internet traffic and can help protect your privacy and security, especially on public Wi-Fi.");
+            QnA.Add("What is a VPN and how does it help protect privacy?", "A VPN (Virtual Private Network) encrypts your internet connection, hiding your data and browsing activity from third parties.");
             QnA.Add("What is a firewall?", "A firewall is a security system that monitors and controls incoming and outgoing network traffic.");
             QnA.Add("What is antivirus software?", "Antivirus software detects, prevents, and removes malicious software from your computer.");
             QnA.Add("What is two-factor authentication?", "Two-factor authentication adds an extra layer of security by requiring a second verification step 1  beyond your password.");
@@ -112,6 +151,8 @@ namespace ST10445832_PROG6221_Part1
 
             // Technical Threats & Advanced Topics
             QnA.Add("What is ransomware?", "Ransomware is malware that encrypts your data and demands payment for the decryption key.");
+            QnA.Add("How does ransomware infect a system?", "It often spreads through phishing emails, malicious attachments, software vulnerabilities, or compromised websites.");
+            QnA.Add("Should I pay the ransom if my files are encrypted?", "Authorities advise against paying, as it doesn't guarantee file recovery and encourages future attacks. Focus on backups and recovery instead.");
             QnA.Add("What is spyware?", "Spyware is software that secretly gathers information about a person or organization without their knowledge.");
             QnA.Add("What is adware?", "Adware is software that automatically displays or downloads advertising material.");
             QnA.Add("What is a botnet?", "A botnet is a network of infected devices controlled by a cybercriminal.");
@@ -133,6 +174,8 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("What is hashing?", "Hashing is converting data into a fixed-size string, usually for security or integrity checking.");
             QnA.Add("What is digital forensics?", "Digital forensics involves investigating and recovering data from digital devices.");
             QnA.Add("What is the difference between a virus and a worm?", "A virus needs a host to spread; a worm can spread on its own.");
+            QnA.Add("What are the main areas of cybersecurity?", "Key areas include network security, application security, information security, operational security, and disaster recovery.");
+            QnA.Add("Who is responsible for cybersecurity?", "Everyone plays a role—from individuals practicing safe behavior to organizations implementing policies and protections.");
 
             // Privacy, Data Protection & Compliance
             QnA.Add("What is personal data?", "Personal data is information that can identify a person, such as name, ID number, or email address.");
@@ -140,6 +183,7 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("What is POPIA?", "The Protection of Personal Information Act (POPIA) is South African legislation protecting personal information.");
             QnA.Add("What is the POPI Act?", "The Protection of Personal Information Act (POPIA) is South African legislation protecting personal information.");
             QnA.Add("How can I protect my privacy online?", "Limit what you share, use privacy settings, avoid oversharing on social media, and consider using VPNs and private browsers.");
+            QnA.Add("Is using incognito mode enough for privacy?", "Incognito mode prevents local history tracking but doesn't hide your activity from websites, ISPs, or employers.");
 
             // Incident Response & Reporting
             QnA.Add("What should I do if I think I’ve been hacked?", "Change passwords immediately, disconnect from the internet, run antivirus scans, and report it to your IT or security team.");
@@ -151,11 +195,16 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("Why is cybersecurity awareness important?", "It helps people recognize threats, avoid risky behaviors, and respond appropriately to incidents.");
             QnA.Add("What is cyber hygiene?", "Cyber hygiene refers to practices that help maintain good digital security, like regular updates and strong passwords.");
             QnA.Add("Why should I care about cybersecurity?", "Everyone is a potential target. Good cybersecurity helps protect your identity, money, and personal data.");
+            QnA.Add("How can a cyberattack impact me personally?", "It can lead to identity theft, financial loss, privacy invasion, or damage to your digital reputation.");
+            QnA.Add("Is cybersecurity only important for businesses?", "No, individuals are frequent targets too. Personal devices, accounts, and data can all be compromised.");
 
             // Kids & Online Safety
             QnA.Add("How can I keep my children safe online?", "Use parental controls, talk about internet safety, monitor online activity, and encourage open conversations.");
             QnA.Add("What should kids know about internet safety?", "They should know not to share personal info, to ask for help if something feels wrong, and to be respectful online.");
             QnA.Add("How can I teach my kids about cybersecurity?", "Use games, videos, and apps designed for online safety education. Lead by example.");
+            QnA.Add("What is two-factor authentication and why is it important?", "It adds an extra layer of security by requiring a second form of verification, such as a text message or authentication app.");
+            QnA.Add("Are public Wi-Fi networks safe to use?", "Public Wi-Fi can be risky. Use a VPN or avoid accessing sensitive accounts when connected to them.");
+
 
             // Safe Browsing
             QnA.Add("What is safe browsing?", "Safe browsing means using the internet cautiously by avoiding suspicious links, ensuring websites are secure, and keeping software up to date.");
