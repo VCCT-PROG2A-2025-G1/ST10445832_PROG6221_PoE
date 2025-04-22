@@ -9,9 +9,7 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Media;
 using System.Text;
 using System.Threading;
@@ -22,7 +20,7 @@ namespace ST10445832_PROG6221_Part1
     class MenuService
     {
         // Chat bot
-        private Bot SecWiz = new Bot();
+        private Bot SecWiz;
         // audio player
         private SoundPlayer AudioPlayer = new SoundPlayer();
         // flag variable for audio player
@@ -33,7 +31,6 @@ namespace ST10445832_PROG6221_Part1
         private bool Exit = false;
         // main menu navigation variables
         private int CursorPosition = 0;
-        private string[] MainMenuOptions = { "\rAsk Question", "\rHelp", "\rExit" };
         // ascii art to display above each menu
         private string[] MenuHeaderText =
         {
@@ -45,7 +42,7 @@ namespace ST10445832_PROG6221_Part1
         };
 
         private string MenuHeader;
-
+        // Title screen ASCII art
         private string logo =
             "###############################################################################" +
             "\n############################++++++++++++++++++++++++++#########################" +
@@ -71,7 +68,14 @@ namespace ST10445832_PROG6221_Part1
             "\n#################################-#############################################" +
             "\n###############################################################################";
 
-
+        // Buttons
+        private string MenuButtons =
+            "    ==================        ==================        ==================\n" +
+            "    =                =        =                =        =                =\n" +
+            "    =      CHAT      =        =      HELP      =        =      EXIT      =\n" +
+            "    =                =        =                =        =                =\n" +
+            "    ==================        ==================        ==================";
+        // Highlighted button design
         private string[] ChatBtnArr =
         {
             "                  ",
@@ -99,13 +103,6 @@ namespace ST10445832_PROG6221_Part1
             "                  "
         };
 
-        private string MenuButtons =
-            "    ==================        ==================        ==================\n" +
-            "    =                =        =                =        =                =\n" +
-            "    =      CHAT      =        =      HELP      =        =      EXIT      =\n" +
-            "    =                =        =                =        =                =\n" +
-            "    ==================        ==================        ==================";
-
 
         //=========================================================//
         // Default constructor
@@ -125,7 +122,7 @@ namespace ST10445832_PROG6221_Part1
             // set console dimensions
             ConfigureConsole();
             // build menu header
-            CreateMenuHeader();
+            CreateMenuHeader("Welcome");
             // start audio greeting
             StartUpGreeting();
             // display title screen animation
@@ -138,6 +135,8 @@ namespace ST10445832_PROG6221_Part1
             Console.SetCursorPosition(0, 0);
             // Request username and clear the console
             RequestUserName();
+            // Create Chat bot instance with user name
+            SecWiz = new Bot(UserName);
             Console.Clear();
             // display main menu
             MainMenu();
@@ -151,6 +150,7 @@ namespace ST10445832_PROG6221_Part1
         private void MainMenu()
         {
             // show header
+            CreateMenuHeader("Main Menu");
             Console.Write(MenuHeader);
             // show menu options
             Console.Write(MenuButtons);
@@ -203,6 +203,7 @@ namespace ST10445832_PROG6221_Part1
                 // allow user to ask another question if the 'exit' answer isn't returned
                 if (answer.Equals("Thanks for chatting!"))
                 {
+                    Thread.Sleep(1000);
                     toMain = true;
                 }
                 else
@@ -225,6 +226,7 @@ namespace ST10445832_PROG6221_Part1
         private void HelpMenu()
         {
             Console.Clear();
+            CreateMenuHeader("Help");
             Console.Write(MenuHeader);
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Main Menu");
@@ -385,23 +387,40 @@ namespace ST10445832_PROG6221_Part1
         }
 
 
-        private void CreateMenuHeader()
+        private void CreateMenuHeader(string menuName)
         {
+            MenuHeader = "";
             int width = Console.WindowWidth;
             // ChatGPT
-            int paddingWidth = (width - MenuHeaderText[0].Length) / 2; // all line are equal length
+            int paddingWidth = (width - MenuHeaderText[0].Length) / 2; // all lines are equal length
             var padding = new string(' ', paddingWidth);
             // End ChatGPT
 
             // add top border
-            MenuHeader += new string('#', width);
+            MenuHeader += new string('#', width) + "\n\n";
             foreach (string line in MenuHeaderText)
             {
 
                 MenuHeader += $"{padding}{line}{padding}\n";
             }
+
             // add bottom border
-            MenuHeader += "\n" + new string('#', width) + "\n\n";
+            if (menuName == "")
+            {
+                MenuHeader += "\n" + new string('#', width) + "\n\n";
+            }
+            else
+            {
+                paddingWidth = ((width - menuName.Length) / 2) - 1;
+                padding = new string('#', paddingWidth);
+                string border = $"{padding} {menuName} {padding}";
+                while (border.Length < 79)
+                {
+                    border += "#";
+                }
+                MenuHeader += $"\n{border}\n\n";
+            }
+
         }
 
 
@@ -459,6 +478,7 @@ namespace ST10445832_PROG6221_Part1
             var menu = "What would you like to know?\n" +
                        $"{UserName}: ";
             Console.Clear();
+            CreateMenuHeader("Chat");
             Console.Write(MenuHeader);
             Console.CursorVisible = true;
             Console.Write(menu);
@@ -489,8 +509,8 @@ namespace ST10445832_PROG6221_Part1
             string[] messageArr = message.Split(' ');
             foreach (string word in messageArr)
             {
-                Console.Write($"{word} ");
                 Thread.Sleep(word.Length * 50);
+                Console.Write($"{word} ");
             }
         }
     }
