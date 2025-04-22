@@ -8,12 +8,13 @@
 
 ## SecWiz Usage
 __IMPORTANT__: reducing the console window width will mess up the UI, though the application functionality will remain.
+
 ### Main Menu
-Highlight the menu optionn you would like to select using __ArrowUp__ and __ArrowDown__.
+Highlight the menu option you would like to select using __ArrowLeft__ and __ArrowRight__.
 Use __Enter__ to select the highlighted option.
 
-### Ask Question
-- After selecting _Ask Question_ in the main menu you will be prompted to ask a question.
+### Chat
+- After selecting _CHAT_ in the main menu you will be prompted to ask a question.
 - Any question you ask will be compared to answerable questions using fuzzy string matching.
 
 - You can enter prompts such as _No more Questions_, _Goodbye_, _Back_, and _Exit_, to return to the __main menu__.
