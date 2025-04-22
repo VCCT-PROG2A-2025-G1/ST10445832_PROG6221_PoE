@@ -11,11 +11,13 @@ namespace ST10445832_PROG6221_Part1
     internal class Bot
     {
         Dictionary<string, string> QnA = new Dictionary<string, string>();
+        string UserName;
 
         //=========================================================//
         // Default Constructor
-        public Bot()
+        public Bot(string username)
         {
+            UserName = username;
             InitialiseQnA();
         }
 
@@ -26,7 +28,7 @@ namespace ST10445832_PROG6221_Part1
         {
             // QnA.Add("", "");
             // DEFAULT
-            QnA.Add("", "I'm sorry, I don't understand your question. Try to rephrase it or ask me something else.");
+            QnA.Add("", $"I'm sorry {UserName}, I don't understand your question. Try to rephrase it or ask me something else.");
 
             // Assistance
             QnA.Add("Help", "What do you want help with? You can ask me about anything cybersecurity related!");
@@ -35,9 +37,9 @@ namespace ST10445832_PROG6221_Part1
 
             // Conversation
             QnA.Add("What is your name?", "My name is SecWiz!");
-            QnA.Add("How are you?", "I am well, thank you. I'm always ready to answer your questions! Ask away!");
+            QnA.Add("How are you?", $"I am well, thank you. I'm always ready to answer your questions! Ask away {UserName}!");
             QnA.Add("What's your purpose?", "I'm here to educate users on matters relating to cyber security and online safety.");
-            QnA.Add("Thank you", "My pleasure. Is there anything else you would like to know?");
+            QnA.Add("Thank you", $"My pleasure, {UserName}. Is there anything else you would like to know?");
 
 
             // CHATGPT
@@ -186,6 +188,7 @@ namespace ST10445832_PROG6221_Part1
             QnA.Add("No", "Thanks for chatting!");
             QnA.Add("No thanks", "Thanks for chatting!");
             QnA.Add("Goodbye", "Thanks for chatting!");
+            QnA.Add("Good bye", "Thanks for chatting!");
             QnA.Add("Bye", "Thanks for chatting!");
             QnA.Add("Back", "Thanks for chatting!");
             QnA.Add("Exit", "Thanks for chatting!");
