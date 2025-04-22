@@ -4,6 +4,9 @@
 ### Requirements
 - Microsoft Visual Studio
 - Nuget Package: FuzzySharp 2.0.2 by Jacob Bayer
+  - Open ST10445832_PROG6221_Part1.sln in Visual Studio
+  - Tools -> NuGet Package Manager -> Manage NuGet Packages for solution
+  - Browse and install FuzzSharp if not under 'installed' tab
 
 
 ## SecWiz Usage
@@ -24,3 +27,7 @@ Use __Enter__ to select the highlighted option.
 
 ### Exit
 - Exit does what it says - it closes the application.
+
+
+## SecWiz Walkthrough/Demonstration
+[https://youtu.be/hN8oyaWWZ0A]
