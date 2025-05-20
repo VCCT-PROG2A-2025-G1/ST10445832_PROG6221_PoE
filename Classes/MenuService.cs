@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ST10445832_PROG6221_Part1
+namespace ST10445832_PROG6221_PoE
 {
     class MenuService
     {

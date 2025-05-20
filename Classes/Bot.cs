@@ -6,7 +6,7 @@
 using System.Collections.Generic;
 using FuzzySharp;
 
-namespace ST10445832_PROG6221_Part1
+namespace ST10445832_PROG6221_PoE
 {
     internal class Bot
     {

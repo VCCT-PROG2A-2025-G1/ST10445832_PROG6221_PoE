@@ -2,7 +2,7 @@
 // ST10445832
 // GR01
 
-namespace ST10445832_PROG6221_Part1
+namespace ST10445832_PROG6221_PoE
 {
     class Program
     {
