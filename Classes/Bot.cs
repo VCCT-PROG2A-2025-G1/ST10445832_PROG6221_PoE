@@ -4,6 +4,7 @@
 
 
 using System.Collections.Generic;
+using System.Linq;
 using FuzzySharp;
 
 namespace ST10445832_PROG6221_PoE
@@ -259,11 +260,22 @@ namespace ST10445832_PROG6221_PoE
             {
                 // compare the question to questions which have answers, ignoring the order of the words in the question
                 var score = Fuzz.TokenSortRatio(userQuestion.ToLower(), question.ToLower());
-                // only provide a non-default answer if the similarity score is higher than 60
-                if (score > 60 && score > fuzzMax)
+                // only provide a non-default answer if the similarity score is higher than 60 or higher than 90 if the prompt is 3 words or fewer
+                if (userQuestion.Split(' ').Count() > 3)
                 {
-                    fuzzMax = score;
-                    bestMatch = question;
+                    if (score > 60 && score > fuzzMax)
+                    {
+                        fuzzMax = score;
+                        bestMatch = question;
+                    }
+                }
+                else
+                {
+                    if (score > 90 && score > fuzzMax)
+                    {
+                        fuzzMax = score;
+                        bestMatch = question;
+                    }
                 }
             }
             // return the most relevant answer
