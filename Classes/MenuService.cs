@@ -213,6 +213,8 @@ namespace ST10445832_PROG6221_PoE
                     question = Console.ReadLine();
                 }
             }
+            TypeMessage($"SecWiz: Goodbye, {UserName}!");
+            Thread.Sleep(1000);
             // prepare the console for the main menu
             Console.Clear();
             Console.CursorVisible = false;
