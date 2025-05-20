@@ -1,4 +1,4 @@
-# ST10445832 PROG6221 Part 1 - SecWiz Chat Bot
+# ST10445832 PROG6221 PoE - SecWiz Chat Bot
 
 ## Running SecWiz
 ### Requirements
@@ -30,4 +30,4 @@ Use __Enter__ to select the highlighted option.
 
 
 ## SecWiz Walkthrough/Demonstration
-[https://youtu.be/hN8oyaWWZ0A]
+Part 1: [https://youtu.be/hN8oyaWWZ0A]
