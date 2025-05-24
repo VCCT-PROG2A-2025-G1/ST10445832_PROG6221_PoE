@@ -64,7 +64,7 @@ namespace ST10445832_PROG6221_PoE
                     return GetBestMatch(userQuestion, choicesDict);
                 }
             }
-            
+
             return GetBestMatch(userQuestion, BotData.QnA);
         }
 
@@ -88,7 +88,7 @@ namespace ST10445832_PROG6221_PoE
             SetSentiment(userQuestion);
 
             // does the user appear confused by the previous answer?
-            if ((prevSentiment != CurrentSentiment) && (CurrentSentiment == (int) Data.Sentiment.CONFUSED))
+            if ((prevSentiment != CurrentSentiment) && (CurrentSentiment == (int)Data.Sentiment.CONFUSED))
             {
                 outputList.Add("I understand it can be confusing. Let me try to explain further.");
             }
@@ -97,7 +97,7 @@ namespace ST10445832_PROG6221_PoE
             int fuzzMax = 0;
             // best match question
             string bestMatch = "";
-            
+
             foreach (string question in qDict.Keys)
             {
                 // compare the question to questions which have answers, ignoring the order of the words in the question
@@ -195,7 +195,7 @@ namespace ST10445832_PROG6221_PoE
         private void SetSentiment(string question)
         {
             // Default mood
-            CurrentSentiment = (int) Data.Sentiment.NEUTRAL;
+            CurrentSentiment = (int)Data.Sentiment.NEUTRAL;
             foreach (string word in question.Split(' '))
             {
                 if (word.Length > 3)
