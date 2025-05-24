@@ -540,6 +540,25 @@ namespace ST10445832_PROG6221_PoE.Classes
 
 
         //=========================================================//
+        // Recall reponses for when a user interest appear later
+        public List<string> RecallInterest(string interest)
+        {
+            interest = Pluralise(interest);
+            return new List<string>
+            {
+                $"Ah, I remember you mentioned being interested in {interest}. That curiosity really sets you apart!",
+                $"Oh yes, you brought up {interest} earlier. You're definitely on the right track—most people don't even think to ask about it!",
+                $"You said before that {interest} was something you wanted to learn more about. That kind of initiative is impressive.",
+                $"Interesting! Since {interest} is something you’ve looked into, you’re already ahead of the game.",
+                $"That fits perfectly—{interest} is something you’ve expressed interest in. Great consistency in your thinking!",
+                $"That connects nicely with your interest in {interest}. You're doing a great job tying everything together.",
+                $"I see you’re sticking with your focus on {interest}. That’s a strong way to build deeper expertise.",
+                $"Since you've shown interest in {interest}, this will make even more sense to you."
+            };
+        }
+
+
+        //=========================================================//
         // Words to base sentiment detection off
         // ** Words suggested by Copilot **
         private void InitialiseSentimentWords()
