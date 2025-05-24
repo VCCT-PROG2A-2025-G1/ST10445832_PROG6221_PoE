@@ -25,19 +25,19 @@ jobs:
       uses: NuGet/setup-nuget@v1
     
     - name: Restore Nuget Packages
-      run: nuget restore ST10445832_PROG6221_Part1.sln
+      run: nuget restore ST10445832_PROG6221_PoE.sln
     # End ChatGPT
     
     - name: Restore dependencies
-      run: dotnet restore ST10445832_PROG6221_Part1.sln
+      run: dotnet restore ST10445832_PROG6221_PoE.sln
       
     - name: Build
-      run: dotnet build ST10445832_PROG6221_Part1.sln --no-restore
+      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore
       
     - name: Test
-      run: dotnet test ST10445832_PROG6221_Part1.sln --no-build --verbosity normal
+      run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal
       
       # ChatGPT
     - name: Check Formatting
-      run: dotnet format ST10445832_PROG6221_Part1.sln --verify-no-changes --severity error
+      run: dotnet format ST10445832_PROG6221_PoE.sln --verify-no-changes --severity error
       # End ChatGPT
