@@ -11,6 +11,8 @@ namespace ST10445832_PROG6221_PoE.Classes
         public Dictionary<string, string> QnA = new Dictionary<string, string>();
         // Main topics
         public List<string> Keywords = new List<string> { "password", "scam", "privacy", "virus", "malware", "phishing" };
+        // several tips for each of the main topics
+        public Dictionary<string, List<string>> Tips = new Dictionary<string, List<string>>();
         // responses to add after answers
         public List<string> FollowUps;
         // responses to add before answers
@@ -421,6 +423,87 @@ namespace ST10445832_PROG6221_PoE.Classes
             QnA.Add("Exit", "Thanks for chatting!");
             QnA.Add("Quit", "Thanks for chatting!");
             QnA.Add("Main menu", "Thanks for chatting!");
+        }
+
+
+        //=========================================================//
+        // Tips for when a tip is asked for.
+        // ** Tips written by Copilot **
+        private void InitialiseTips()
+        {
+            Tips.Add("password tip",
+                new List<string>
+                {
+                    "Use a unique password for every account.",
+                    "Do not reuse passwords. Reusing passwords can compromise multiple accounts if a single password is leaked somewhere.",
+                    "Change your passwords regularly, especially if you suspect an account may have been compromised.",
+                    "Use a password manager to store your credentials.",
+                    "Create strong passwords with a mix of letters, numbers, and symbols.",
+                    "Avoid using personal information such as your name, birthdate, or common words in your passwords.",
+                    "Avoid using personal information in your passwords."
+                });
+
+            Tips.Add("phishing tip",
+                new List<string>
+                {
+                    "Never click on suspicious links in emails or texts.",
+                    "Verify sender addresses before responding to emails.",
+                    "Be cautious of urgent requests for personal information.",
+                    "Report phishing attempts to your IT/security team.",
+                    "Be cautious of unsolicited emails or messages, especially those asking for personal information.",
+                    "Be careful about what you post on social media; avoid sharing sensitive personal information.",
+                    "Check website URLs for HTTPS and a padlock icon before entering sensitive information.",
+                    "Enable two-factor authentication (2FA) on your important accounts for extra security."
+                });
+
+            Tips.Add("malware tip",
+                new List<string>
+                {
+                    "Never download software or attachments from unknown or untrusted sources.",
+                    "Keep your antivirus and anti-malware software up to date.",
+                    "Avoid clicking on pop-up ads or suspicious links.",
+                    "Use real-time protection features in your security software.",
+                    "Be cautious when using USB drives or external media—scan them before use.",
+                    "Regularly back up your data to an offline or cloud source.",
+                    "Do not disable built-in security features like Windows Defender or firewall without a good reason.",
+                    "Educate yourself and others about common malware tactics like trojans, ransomware, and spyware."
+                });
+
+            Tips.Add("scam tip",
+                new List<string>
+                {
+                    "Be skeptical of deals that sound too good to be true.",
+                    "Verify the identity of anyone asking for money or personal information.",
+                    "Don't trust caller ID—scammers can spoof numbers.",
+                    "Avoid wiring money or sending gift cards to strangers.",
+                    "Report scams to your local authorities or consumer protection agency.",
+                    "Use multi-factor authentication to reduce risk even if credentials are stolen.",
+                    "Check URLs carefully before entering sensitive information."
+                });
+
+            Tips.Add("privacy tip",
+                new List<string>
+                {
+                    "Review app permissions and limit data access where possible.",
+                    "Use encrypted messaging services for private communication.",
+                    "Avoid oversharing personal details on social media.",
+                    "Regularly review and update privacy settings on all online accounts.",
+                    "Use browser extensions that block trackers and third-party cookies.",
+                    "Use a VPN on public networks to obscure your internet activity.",
+                    "Delete unused accounts and limit data collected by services."
+                });
+
+            Tips.Add("virus tip",
+                new List<string>
+                {
+                    "Install reputable antivirus software and keep it up to date.",
+                    "Do not open email attachments unless you trust the source.",
+                    "Be cautious when downloading files from the internet or peer-to-peer networks.",
+                    "Avoid pirated software, which is often bundled with malware or viruses.",
+                    "Regularly scan your system for threats.",
+                    "Keep your operating system and software patched with the latest updates.",
+                    "Use email filters and security software to detect malicious content before it reaches you."
+                });
         }
 
 
