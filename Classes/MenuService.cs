@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using System.Text;
@@ -193,25 +194,28 @@ namespace ST10445832_PROG6221_PoE
             while (!toMain)
             {
                 // get an answer
-                var answer = SecWiz.AnswerQuestion(question);
+                List<string> answer = SecWiz.AnswerQuestion(question);
+                if (answer.Contains("Thanks for chatting!"))
+                {
+                    Console.Write($"\rSecWiz: ");
+                    TypeMessage("Thanks for chatting!");
+                    Console.Write("\n");
+                    Thread.Sleep(1000);
+                    toMain = true;
+                    break;
+                }
                 // ...
                 ShowThinking();
                 // display answer
-                Console.Write($"\rSecWiz: ");
-                TypeMessage(answer);
-                Console.Write("\n");
-                // allow user to ask another question if the 'exit' answer isn't returned
-                if (answer.Equals("Thanks for chatting!"))
+                foreach (string line in answer)
                 {
-                    Thread.Sleep(1000);
-                    toMain = true;
+                    Console.Write($"\rSecWiz: ");
+                    TypeMessage(line);
+                    Console.Write("\n");
                 }
-                else
-                {
-                    Console.Write($"{UserName}: ");
-                    // update question variable with new question
-                    question = Console.ReadLine();
-                }
+                Console.Write($"{UserName}: ");
+                // update question variable with new question
+                question = Console.ReadLine();
             }
             TypeMessage($"SecWiz: Goodbye, {UserName}!");
             Thread.Sleep(1000);
