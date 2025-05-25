@@ -19,9 +19,14 @@ Use __Enter__ to select the highlighted option.
 ### Chat
 - After selecting _CHAT_ in the main menu you will be prompted to ask a question.
 - Any question you ask will be compared to answerable questions using fuzzy string matching.
-
+> Example <br>
+> User: Give me a password tip <br>
+> SecWiz: Make strong passwords, using a combination of upper and lower case letters, numbers, and symbols.
 - You can enter prompts such as _No more Questions_, _Goodbye_, _Back_, and _Exit_, to return to the __main menu__.
-
+> Example <br>
+> User: Goodbye! <br>
+> SecWiz: Thanks for Chatting! <br>
+> SecWiz: Goodbye >username<
 ### Help
 - The help option in the main menu provides you with some information about SecWiz and how to use it.
 
