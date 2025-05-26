@@ -36,3 +36,4 @@ Use __Enter__ to select the highlighted option.
 
 ## SecWiz Walkthrough/Demonstration
 Part 1: [https://youtu.be/hN8oyaWWZ0A]
+Part 2: [https://youtu.be/91BsgoXmWG8]
