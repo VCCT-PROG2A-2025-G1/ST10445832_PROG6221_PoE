@@ -168,7 +168,7 @@ namespace ST10445832_PROG6221_PoE
                 {
                     outputList.Add(tip);
                 }
-            } while ( tip.Equals(AnswerHistory.Last()) );
+            } while (tip.Equals(AnswerHistory.Last()));
             AnswerHistory.Add(tip);
             // Add follow up
             outputList.Add(GetFollowUp(keyword));
