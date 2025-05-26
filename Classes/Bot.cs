@@ -18,6 +18,7 @@ namespace ST10445832_PROG6221_PoE
         private string UserInterest;
         private string CurrentTopic;
         private List<string> InputHistory = new List<string>();
+        private List<string> AnswerHistory = new List<string>();
 
         private Random Rand = new Random();
 
@@ -124,7 +125,7 @@ namespace ST10445832_PROG6221_PoE
             if (!bestMatch.Equals(""))
             {
                 // Add an opener
-                if (UserInterest != null && qDict[bestMatch].ToLower().Contains(UserInterest) && InputHistory.Count() > 2)
+                if (UserInterest != null && userQuestion.Contains(UserInterest) && InputHistory.Count() > 2)
                 {
                     outputList.Add(BotData.RecallInterest(UserInterest)[Rand.Next(0, 8)]);
                 }
@@ -142,7 +143,7 @@ namespace ST10445832_PROG6221_PoE
                 // Default response
                 outputList.Add(qDict[bestMatch]);
             }
-
+            AnswerHistory.Add(qDict[bestMatch]);
             return outputList;
         }
 
@@ -156,9 +157,19 @@ namespace ST10445832_PROG6221_PoE
             SetSentiment(userQuestion);
             // Add an opener
             outputList.Insert(0, GetSentimentOpener());
-            // Add tip
-            var rand = Rand.Next(0, BotData.Tips[$"{keyword} tip"].Count());
-            outputList.Add(BotData.Tips[$"{keyword} tip"][rand]);
+            // Add tip if not the same as previous output
+            int rand;
+            string tip = "";
+            do
+            {
+                rand = Rand.Next(0, BotData.Tips[$"{keyword} tip"].Count());
+                tip = BotData.Tips[$"{keyword} tip"][rand];
+                if (tip != AnswerHistory.Last())
+                {
+                    outputList.Add(tip);
+                }
+            } while ( tip.Equals(AnswerHistory.Last()) );
+            AnswerHistory.Add(tip);
             // Add follow up
             outputList.Add(GetFollowUp(keyword));
 
