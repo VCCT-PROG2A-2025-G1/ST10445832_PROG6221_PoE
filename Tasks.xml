@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tasks>
+	<Task>
+		<Title>Test Task</Title>
+		<Description>This task is for testing purposes</Description>
+		<Reminder>2025-07-08T12:00:00</Reminder>
+		<Created>2025-07-08T12:00:00</Created>
+	</Task>
+</Tasks>

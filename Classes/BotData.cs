@@ -1,11 +1,15 @@
 ﻿// References
 // https://chatgpt.com
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ST10445832_PROG6221_PoE.Classes
+namespace ST10445832_PROG6221_POE_GUI.Classes
 {
-    internal class Data
+    public class BotData
     {
         // all questions and answers
         public Dictionary<string, string> QnA = new Dictionary<string, string>();
@@ -19,6 +23,15 @@ namespace ST10445832_PROG6221_PoE.Classes
         public List<List<string>> Openers = new List<List<string>>();
         // words used to gague sentiment
         public List<string> SentimentWords = new List<string>();
+        // outputs for first interaction on entering chat
+        public List<string> FirstMessageEndings = new List<string>()
+        {
+            "What will it be this time?",
+            "How can I help?",
+            "What would you like to know?",
+            "What do you want to know about?",
+            "What would you like to ask me?"
+        };
 
         public string UserName;
 
@@ -36,7 +49,7 @@ namespace ST10445832_PROG6221_PoE.Classes
 
         //=========================================================//
         // Default constructor
-        public Data(string userName)
+        public BotData(string userName)
         {
             UserName = userName;
             InitialiseQnA();
@@ -413,16 +426,16 @@ namespace ST10445832_PROG6221_PoE.Classes
             //END CHATGPT
 
             // EXIT (return to main menu)
-            QnA.Add("No more questions", "Thanks for chatting!");
-            QnA.Add("No thanks", "Thanks for chatting!");
-            QnA.Add("No", "Thanks for chatting!");
-            QnA.Add("Goodbye", "Thanks for chatting!");
-            QnA.Add("Good bye", "Thanks for chatting!");
-            QnA.Add("Bye", "Thanks for chatting!");
-            QnA.Add("Back", "Thanks for chatting!");
-            QnA.Add("Exit", "Thanks for chatting!");
-            QnA.Add("Quit", "Thanks for chatting!");
-            QnA.Add("Main menu", "Thanks for chatting!");
+            //QnA.Add("No more questions", "Thanks for chatting!");
+            //QnA.Add("No thanks", "Thanks for chatting!");
+            //QnA.Add("No", "Thanks for chatting!");
+            //QnA.Add("Goodbye", "Thanks for chatting!");
+            //QnA.Add("Good bye", "Thanks for chatting!");
+            //QnA.Add("Bye", "Thanks for chatting!");
+            //QnA.Add("Back", "Thanks for chatting!");
+            //QnA.Add("Exit", "Thanks for chatting!");
+            //QnA.Add("Quit", "Thanks for chatting!");
+            //QnA.Add("Main menu", "Thanks for chatting!");
         }
 
 

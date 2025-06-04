@@ -2,96 +2,98 @@
 // https://chatgpt.com
 // https://github.com/JakeBayer/FuzzySharp
 
+using FuzzySharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FuzzySharp;
-using ST10445832_PROG6221_PoE.Classes;
 
-namespace ST10445832_PROG6221_PoE
+namespace ST10445832_PROG6221_POE_GUI.Classes
 {
-    internal class Bot
+    public class ChatBot
     {
-        private Data BotData;
+        private BotData _botData;
 
-        private int CurrentSentiment;
-        private string UserInterest;
-        private string CurrentTopic;
-        private List<string> InputHistory = new List<string>();
-        private List<string> AnswerHistory = new List<string>();
+        private int _currentSentiment;
+        private string _userInterest;
+        private string _currentTopic;
+        private List<string> _inputHistory = new List<string>();
+        private List<string> _answerHistory = new List<string>();
 
-        private Random Rand = new Random();
+        private Random _rand = new Random();
 
         //=========================================================//
         // Default Constructor
-        public Bot(string userName)
+        public ChatBot(string userName)
         {
             // Initialise data
-            BotData = new Data(userName);
+            _botData = new BotData(userName);
         }
 
 
         //=========================================================//
         // Return an answer based on a keyword, or a general match
         // if no known keyword is identified.
-        public List<string> AnswerQuestion(string userQuestion)
+        public string AnswerQuestion(string userQuestion)
         {
-            // prepare question
             userQuestion = userQuestion.Trim().ToLower();
-            // add question to history
-            InputHistory.Add(userQuestion);
+            _inputHistory.Add(userQuestion);
+            string answerString = "";
 
             // check for keyword
-            var keywordMatch = Process.ExtractOne(userQuestion, BotData.Keywords);
+            var keywordMatch = Process.ExtractOne(userQuestion, _botData.Keywords);
             //  limit responses by keyword if found
             if (keywordMatch != null && keywordMatch.Score >= 60)
             {
-                CurrentTopic = keywordMatch.Value;
+                _currentTopic = keywordMatch.Value;
 
                 if (userQuestion.Contains("tip"))
                 {
-                    return GetRandomTip(userQuestion, CurrentTopic);
+                    answerString += GetRandomTip(userQuestion, _currentTopic);
                 }
                 else
                 {
-                    var keywordAnswers = Process.ExtractAll(CurrentTopic, BotData.QnA.Keys)
+                    var keywordAnswers = Process.ExtractAll(_currentTopic, _botData.QnA.Keys)
                         .Where(question => question.Score > 75)
-                        .Select(question => BotData.QnA[question.Value])
+                        .Select(question => _botData.QnA[question.Value])
                         .ToList();
-                    var choicesDict = BotData.QnA.Where(kvp => keywordAnswers.Contains(kvp.Value))
+                    var choicesDict = _botData.QnA.Where(kvp => keywordAnswers.Contains(kvp.Value))
                         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value); // Copilot
-                    choicesDict.Add("", BotData.QnA[""]);
+                    choicesDict.Add("", _botData.QnA[""]);
 
-                    return GetBestMatch(userQuestion, choicesDict);
+                    answerString += $"{GetBestMatch(userQuestion, choicesDict)}";
                 }
             }
+            else
+            {
+                answerString += $"{GetBestMatch(userQuestion, _botData.QnA)}";
+            }
 
-            return GetBestMatch(userQuestion, BotData.QnA);
+            return answerString;
         }
-
 
         //=========================================================//
         // Use the FuzzySharp package to return an answer based
         // on a similarity score, comparing the user question to
         // the questions in the QnA dictionary
-        private List<string> GetBestMatch(string userQuestion, Dictionary<string, string> qDict)
+        private string GetBestMatch(string userQuestion, Dictionary<string, string> qDict)
         {
-            List<string> outputList = new List<string>();
+            string answer = "";
 
             // record the user's interest if stated
             if (userQuestion.Contains("interested"))
             {
-                UserInterest = CurrentTopic;
-                outputList.Add(BotData.GetInterestOpener(UserInterest));
+                _userInterest = _currentTopic;
+                answer += $"{_botData.GetInterestOpener(_userInterest)}";
             }
 
-            var prevSentiment = CurrentSentiment;
+            var prevSentiment = _currentSentiment;
+
             SetSentiment(userQuestion);
 
             // does the user appear confused by the previous answer?
-            if ((prevSentiment != CurrentSentiment) && (CurrentSentiment == (int)Data.Sentiment.CONFUSED))
+            if ((prevSentiment != _currentSentiment) && (_currentSentiment == (int)BotData.Sentiment.CONFUSED))
             {
-                outputList.Add("I understand it can be confusing. Let me try to explain further.");
+                answer += (answer.Length > 0 ? "\n" : "") + "I understand, it can be confusing. Let me try to explain further.";
             }
 
             // best match score
@@ -125,55 +127,61 @@ namespace ST10445832_PROG6221_PoE
             if (!bestMatch.Equals(""))
             {
                 // Add an opener
-                if (UserInterest != null && userQuestion.Contains(UserInterest) && InputHistory.Count() > 2)
+                if (_userInterest != null && userQuestion.Contains(_userInterest) && _inputHistory.Count() > 2)
                 {
-                    outputList.Add(BotData.RecallInterest(UserInterest)[Rand.Next(0, 8)]);
+                    answer += (answer.Length > 0 ? "\n" : "") + $"{_botData.RecallInterest(_userInterest)[_rand.Next(0, 8)]}";
                 }
                 else
                 {
-                    outputList.Insert(0, BotData.Openers[CurrentSentiment][Rand.Next(0, BotData.Openers[CurrentSentiment].Count())]);
+                    answer = (answer.Length > 0 ? "" : _botData.Openers[_currentSentiment][_rand.Next(0, _botData.Openers[_currentSentiment].Count())]) + $"\n{answer}";
                 }
                 // Add answer
-                outputList.Add(qDict[bestMatch]);
+                answer += (answer.Length > 0 ? "\n" : "") + $"{qDict[bestMatch]}";
                 // Add follow up
-                outputList.Add(GetFollowUp(""));
+                answer += $"\n{GetFollowUp("")}";
             }
             else
             {
                 // Default response
-                outputList.Add(qDict[bestMatch]);
+                answer += (answer.Length > 0 ? "\n" : "") + $"{qDict[bestMatch]}";
             }
-            AnswerHistory.Add(qDict[bestMatch]);
-            return outputList;
+            _answerHistory.Add(qDict[bestMatch]);
+
+            return answer;
         }
 
 
         //=========================================================//
         // Returns a random tip given a topic
-        private List<string> GetRandomTip(string userQuestion, string keyword)
+        private string GetRandomTip(string userQuestion, string keyword)
         {
-            List<string> outputList = new List<string>();
+            string answer = "";
             userQuestion = userQuestion.ToLower();
+
             SetSentiment(userQuestion);
+
             // Add an opener
-            outputList.Insert(0, GetSentimentOpener());
+            answer += GetSentimentOpener();
+
             // Add tip if not the same as previous output
             int rand;
             string tip = "";
             do
             {
-                rand = Rand.Next(0, BotData.Tips[$"{keyword} tip"].Count());
-                tip = BotData.Tips[$"{keyword} tip"][rand];
-                if (tip != AnswerHistory.Last())
+                rand = _rand.Next(0, _botData.Tips[$"{keyword} tip"].Count());
+                tip = _botData.Tips[$"{keyword} tip"][rand];
+                if (_answerHistory.Count > 0 && tip != _answerHistory.Last())
                 {
-                    outputList.Add(tip);
+                    answer +=$"\n{tip}";
                 }
-            } while (tip.Equals(AnswerHistory.Last()));
-            AnswerHistory.Add(tip);
-            // Add follow up
-            outputList.Add(GetFollowUp(keyword));
+            } while (_answerHistory.Count > 0 && tip.Equals(_answerHistory.Last()));
 
-            return outputList;
+            _answerHistory.Add(tip);
+
+            // Add follow up
+            answer += $"\n{GetFollowUp(keyword)}";
+
+            return answer;
         }
 
 
@@ -181,7 +189,7 @@ namespace ST10445832_PROG6221_PoE
         // Returns a sentiment based opener
         private string GetSentimentOpener()
         {
-            return BotData.Openers[CurrentSentiment][Rand.Next(0, BotData.Openers[CurrentSentiment].Count())];
+            return _botData.Openers[_currentSentiment][_rand.Next(0, _botData.Openers[_currentSentiment].Count())];
         }
 
 
@@ -191,11 +199,11 @@ namespace ST10445832_PROG6221_PoE
         {
             if (topic.Length == 0)
             {
-                return BotData.FollowUps[Rand.Next(0, BotData.FollowUps.Count())];
+                return _botData.FollowUps[_rand.Next(0, _botData.FollowUps.Count())];
             }
             else
             {
-                return BotData.GetFollowUps(topic)[Rand.Next(0, BotData.FollowUps.Count())];
+                return _botData.GetFollowUps(topic)[_rand.Next(0, _botData.FollowUps.Count())];
             }
         }
 
@@ -206,30 +214,30 @@ namespace ST10445832_PROG6221_PoE
         private void SetSentiment(string question)
         {
             // Default mood
-            CurrentSentiment = (int)Data.Sentiment.NEUTRAL;
+            _currentSentiment = (int)BotData.Sentiment.NEUTRAL;
             foreach (string word in question.Split(' '))
             {
                 if (word.Length > 3)
                 {
-                    if (Process.ExtractOne(word, BotData.SentimentWords[(int)Data.Sentiment.WORRIED]).Score >= 60)
+                    if (Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.WORRIED]).Score >= 60)
                     {
-                        CurrentSentiment = (int)Data.Sentiment.WORRIED;
+                        _currentSentiment = (int)BotData.Sentiment.WORRIED;
                     }
-                    else if (Process.ExtractOne(word, BotData.SentimentWords[(int)Data.Sentiment.CURIOUS]).Score >= 60)
+                    else if (Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.CURIOUS]).Score >= 60)
                     {
-                        CurrentSentiment = (int)Data.Sentiment.CURIOUS;
+                        _currentSentiment = (int)BotData.Sentiment.CURIOUS;
                     }
-                    else if (Process.ExtractOne(word, BotData.SentimentWords[(int)Data.Sentiment.HAPPY]).Score >= 60)
+                    else if (Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.HAPPY]).Score >= 60)
                     {
-                        CurrentSentiment = (int)Data.Sentiment.HAPPY;
+                        _currentSentiment = (int)BotData.Sentiment.HAPPY;
                     }
-                    else if (Process.ExtractOne(word, BotData.SentimentWords[(int)Data.Sentiment.FRUSTRATED]).Score >= 60)
+                    else if (Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.FRUSTRATED]).Score >= 60)
                     {
-                        CurrentSentiment = (int)Data.Sentiment.FRUSTRATED;
+                        _currentSentiment = (int)BotData.Sentiment.FRUSTRATED;
                     }
-                    else if (Process.ExtractOne(word, BotData.SentimentWords[(int)Data.Sentiment.CONFUSED]).Score >= 60)
+                    else if (Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.CONFUSED]).Score >= 60)
                     {
-                        CurrentSentiment = (int)Data.Sentiment.CONFUSED;
+                        _currentSentiment = (int)BotData.Sentiment.CONFUSED;
                     }
                 }
             }

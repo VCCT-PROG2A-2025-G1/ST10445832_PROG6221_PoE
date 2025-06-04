@@ -1,0 +1,39 @@
+﻿<!-- References -->
+<!-- https://gemini.google.com -->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Storyboard x:Key="BootImageAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="(Image.RenderTransform).(TranslateTransform.Y)"
+                         From="430" To="-10" Duration="0:0:1.2">
+            <DoubleAnimation.EasingFunction>
+                <BackEase EasingMode="EaseOut" Amplitude="0.8" />
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+        <DoubleAnimation Storyboard.TargetProperty="(Image.RenderTransform).(TranslateTransform.X)"
+                         From="0" To="-800" Duration="0:0:1.5" BeginTime="0:0:3">
+            <DoubleAnimation.EasingFunction>
+                <CubicEase EasingMode="EaseIn" />
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>
+
+    <Storyboard x:Key="ScreenSwipeOut">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" 
+                 From="0" To="-800" Duration="0:0:0.8">
+            <DoubleAnimation.EasingFunction>
+                <CubicEase EasingMode="EaseIn" />
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>
+
+    <Storyboard x:Key="ScreenSwipeIn">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" 
+                         From="800" To="0" Duration="0:0:1">
+            <DoubleAnimation.EasingFunction>
+                <CubicEase EasingMode="EaseOut" />
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>
+</ResourceDictionary>
