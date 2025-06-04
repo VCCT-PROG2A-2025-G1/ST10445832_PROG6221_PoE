@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading.Tasks;
 
-namespace ST10445832_PROG6221_POE_GUI.Classes
+namespace ST10445832_PROG6221_PoE.Classes
 {
     public class ChatMessage : ObservableObject
     {
