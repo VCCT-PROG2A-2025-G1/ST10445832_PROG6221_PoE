@@ -1,13 +1,15 @@
 ﻿// References
 // https://chatgpt.com
+// https://gemini.google.com
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Xml.Serialization;
 
-namespace ST10445832_PROG6221_POE_GUI.Classes
+namespace ST10445832_PROG6221_PoE.Classes
 {
     public class BotData
     {
@@ -47,6 +49,9 @@ namespace ST10445832_PROG6221_POE_GUI.Classes
         };
 
 
+        private string TasksDataPath = "Tasks.xml";
+        public ObservableCollection<TaskReminder> Tasks { get; set; }
+
         //=========================================================//
         // Default constructor
         public BotData(string userName)
@@ -57,6 +62,66 @@ namespace ST10445832_PROG6221_POE_GUI.Classes
             InitialiseOpeners();
             InitialiseFollowUps();
             InitialiseSentimentWords();
+            Tasks = new ObservableCollection<TaskReminder>();
+            LoadTasks();
+        }
+
+
+        private void LoadTasks()
+        {
+            if (File.Exists(TasksDataPath))
+            {
+                try
+                {
+                    // Gemini
+                    XmlRootAttribute rootAttribute = new XmlRootAttribute("Tasks");
+                    rootAttribute.Namespace = "";
+                    XmlSerializer xmlSerial = new XmlSerializer(typeof(TasksStore), rootAttribute);
+                    using (FileStream fs = new FileStream(TasksDataPath, FileMode.Open))
+                    {
+                        var tasksStore = (TasksStore)xmlSerial.Deserialize(fs);
+                        if (tasksStore != null && tasksStore.Tasks.Count > 0)
+                        {
+                            foreach (var task in tasksStore.Tasks)
+                            {
+                                Tasks.Add(task);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Tasks file not found");
+            }
+        }
+
+
+        public void UpdateTasks()
+        {
+            TasksStore newTasksStore = new TasksStore();
+            foreach (var task in Tasks)
+            {
+                newTasksStore.Tasks.Add(task);
+            }
+            try
+            {
+                XmlRootAttribute rootAttribute = new XmlRootAttribute("Tasks");
+                rootAttribute.Namespace = "";
+                XmlSerializer xmlSerial = new XmlSerializer(typeof(TasksStore), rootAttribute);
+                using (FileStream fs = new FileStream(TasksDataPath, FileMode.Create))
+                {
+                    xmlSerial.Serialize(fs, newTasksStore);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
 

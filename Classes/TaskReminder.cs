@@ -1,16 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// References
+// https://gemini.google.com
 
-namespace ST10445832_PROG6221_POE_GUI.Classes
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml.Serialization;
+
+namespace ST10445832_PROG6221_PoE.Classes
 {
+
+    [XmlRoot("Tasks", Namespace="")]
+    public class TasksStore
+    {
+        [XmlElement("Task")]
+        public List<TaskReminder> Tasks { get; set; }
+        public TasksStore()
+        {
+            Tasks = new List<TaskReminder>();
+        }
+    }
+
     public class TaskReminder
     {
+        [XmlElement("Title")]
         public string Title { get; set; }
+        [XmlElement("Description")]
         public string Description { get; set; }
+        [XmlElement("Reminder")]
         public DateTime Reminder { get; set; }
+        [XmlElement("Created")]
         public DateTime Created { get; set; }
 
         public TaskReminder() { }

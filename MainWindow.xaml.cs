@@ -5,65 +5,33 @@
 
 
 
-using ST10445832_PROG6221_POE_GUI.Classes;
-using System;
+using ST10445832_PROG6221_PoE.Classes;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using System.Xml.Serialization;
 
-namespace ST10445832_PROG6221_POE_GUI
+namespace ST10445832_PROG6221_PoE
 {
     public partial class MainWindow : Window
     {
         private string _userName;
         private Panel _currentPanel;
         private ChatBot _secWiz;
-        private BotData _botData;
-        private Random _random = new Random();
-
-        private string TasksDataPath = "Tasks.xml";
-        public ObservableCollection<TaskReminder> Tasks { get; set; }
         public ObservableCollection<ChatMessage> ChatMessages { get; set; }
         public MainWindow()
         {
-            Tasks = new ObservableCollection<TaskReminder>();
             ChatMessages = new ObservableCollection<ChatMessage>();
             this.DataContext = this;
             InitializeComponent();
-            LoadTasks();
             IntroPanel.Visibility = Visibility.Collapsed;
             MenuPanel.Visibility = Visibility.Collapsed;
             ChatPanel.Visibility = Visibility.Collapsed;
             TaskPanel.Visibility = Visibility.Collapsed;
             HelpPanel.Visibility = Visibility.Collapsed;
             WelcomePanel.Visibility = Visibility.Collapsed;
-        }
-
-        private void LoadTasks()
-        {
-            if (File.Exists(TasksDataPath))
-            {
-                try
-                {
-                    XmlSerializer xmlSerial = new XmlSerializer(typeof(ObservableCollection<TaskReminder>));
-                    using (FileStream fs = new FileStream(TasksDataPath, FileMode.Open))
-                    {
-                        var tasks = (ObservableCollection<TaskReminder>) xmlSerial.Deserialize(fs);
-                        foreach(TaskReminder task in tasks)
-                        {
-                            Tasks.Add(task);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }
         }
 
         private void Title_Start(object sender, RoutedEventArgs e)
@@ -76,9 +44,9 @@ namespace ST10445832_PROG6221_POE_GUI
         }
         private void BootPanel_Ended(object sender, RoutedEventArgs e)
         {
-            BootPanel.Visibility = Visibility.Collapsed;
-            TitleLabel.Visibility = Visibility.Visible;
             IntroPanel.Visibility = Visibility.Visible;
+            ChangeViewSwipe(BootPanel, IntroPanel);
+            TitleLabel.Visibility = Visibility.Visible;
         }
 
         private void UserNameContinue_Click(object sender, RoutedEventArgs e)
@@ -91,7 +59,6 @@ namespace ST10445832_PROG6221_POE_GUI
             {
                 _userName = UserNameInput.Text;
                 _secWiz = new ChatBot(_userName);
-                _botData = new BotData(_userName);
                 UserWelcomeLabel.Content = $"Hello {_userName}, welcome to SecWiz!";
                 ChangeViewSwipe(IntroPanel, WelcomePanel);
             }
@@ -105,7 +72,7 @@ namespace ST10445832_PROG6221_POE_GUI
             
             if (ChatMessages.Count > 0)
             {
-                ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"Welcome back {_userName}. {_botData.FirstMessageEndings[_random.Next(0, _botData.FirstMessageEndings.Count)]}" });
+                ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"{_secWiz.Greeting()}" });
                 await ChatMessages[ChatMessages.Count - 1].TypeMessage();
             }
             else
@@ -182,6 +149,11 @@ namespace ST10445832_PROG6221_POE_GUI
             swipeOut.Begin();
             swipeIn.Begin();
             next.Visibility = Visibility.Visible;
+        }
+
+        private void WelcomeGreeting_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            Debug.WriteLine("MEDIA FAIL");
         }
     }
 }

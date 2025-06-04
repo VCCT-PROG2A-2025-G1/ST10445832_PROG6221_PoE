@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ST10445832_PROG6221_POE_GUI.Classes
+namespace ST10445832_PROG6221_PoE.Classes
 {
     public class ChatBot
     {
@@ -38,6 +38,19 @@ namespace ST10445832_PROG6221_POE_GUI.Classes
             userQuestion = userQuestion.Trim().ToLower();
             _inputHistory.Add(userQuestion);
             string answerString = "";
+
+            if (userQuestion.Contains("add task"))
+            {
+                AddTask(userQuestion);
+            }
+
+            if (userQuestion.Contains("list tasks"))
+            {
+                foreach (var task in _botData.Tasks)
+                {
+                    answerString += task.ToString();
+                }
+            }
 
             // check for keyword
             var keywordMatch = Process.ExtractOne(userQuestion, _botData.Keywords);
@@ -241,6 +254,22 @@ namespace ST10445832_PROG6221_POE_GUI.Classes
                     }
                 }
             }
+        }
+
+        public string Greeting()
+        {
+            return $"Welcome back {_botData.UserName}. {_botData.FirstMessageEndings[_rand.Next(0, _botData.FirstMessageEndings.Count)]}";
+        }
+
+        private void AddTask(string userQuestion)
+        {
+            _botData.Tasks.Add(new TaskReminder("Placeholder", "Placeholder", DateTime.Now));
+            _botData.UpdateTasks();
+        }
+
+        private void DeleteTask(string userQuestion)
+        {
+
         }
 
     }
