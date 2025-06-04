@@ -115,17 +115,30 @@ namespace ST10445832_PROG6221_PoE
         // Click event handler for SendMessage Button in ChatPanel
         private async void SendMessage_Click(object sender, RoutedEventArgs e)
         {
+            ChatInputBox.IsEnabled = false;
+            SendMessageBtn.IsEnabled = false;
             // User question
             string question = ChatInputBox.Text;
             // clear question input field
-            ChatInputBox.Text = "";
-            // show user question in UI
-            ChatMessages.Add(new ChatMessage() { Author=$"{_userName}", Text=$"{question}" });
-            await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
+            if (question.Length > 0)
+            {
+                ChatInputBox.Text = "";
+                // show user question in UI
+                ChatMessages.Add(new ChatMessage() { Author = $"{_userName}", Text = $"{question}" });
+                await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
 
-            // Answer question and display in UI
-            ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"\r{_secWiz.AnswerQuestion(question)}" });
-            await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
+                // Answer question and display in UI
+                ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"\r{_secWiz.AnswerQuestion(question)}" });
+                await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
+            }
+            else
+            {
+                ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = "You must type something for me to be able to answer." });
+                await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
+            }
+            
+            ChatInputBox.IsEnabled = true;
+            SendMessageBtn.IsEnabled = true ;
         }
 
         private void ChangeViewSwipe(Panel current, Panel next)
