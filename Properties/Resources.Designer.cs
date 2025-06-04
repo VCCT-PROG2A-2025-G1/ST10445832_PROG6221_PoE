@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ST10445832_PROG6221_POE_GUI.Properties
+namespace ST10445832_PROG6221_PoE.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace ST10445832_PROG6221_POE_GUI.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ST10445832_PROG6221_POE_GUI.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ST10445832_PROG6221_PoE.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

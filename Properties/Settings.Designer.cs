@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ST10445832_PROG6221_POE_GUI.Properties
+namespace ST10445832_PROG6221_PoE.Properties
 {
 
 
