@@ -29,7 +29,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             TypingText = "";
             if (Author == "SecWiz")
             {
-                string[] messageArr = Text.Split(' ');
+                string[] messageArr = Text.TrimStart().Split(' ');
                 foreach (string word in messageArr)
                 {
                     await Task.Delay(word.Length * 50);
