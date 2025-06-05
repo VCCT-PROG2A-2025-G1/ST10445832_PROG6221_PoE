@@ -30,6 +30,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         public DateTime Reminder { get; set; }
         [XmlElement("Created")]
         public DateTime Created { get; set; }
+        public string OriginalInput { get; set; }
 
         public TaskReminder() { }
 
