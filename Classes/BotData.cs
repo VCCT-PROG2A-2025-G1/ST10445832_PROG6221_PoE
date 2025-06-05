@@ -48,7 +48,6 @@ namespace ST10445832_PROG6221_PoE.Classes
             NEUTRAL = 5
         };
 
-
         private string TasksDataPath = "Tasks.xml";
         public ObservableCollection<TaskReminder> Tasks { get; set; }
 
@@ -65,7 +64,6 @@ namespace ST10445832_PROG6221_PoE.Classes
             Tasks = new ObservableCollection<TaskReminder>();
             LoadTasks();
         }
-
 
         private void LoadTasks()
         {
