@@ -128,7 +128,7 @@ namespace ST10445832_PROG6221_PoE
                 await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
 
                 // Answer question and display in UI
-                ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"\r{_secWiz.AnswerQuestion(question)}" });
+                ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"\r{_secWiz.ProcessInput(question)}" });
                 await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
             }
             else
