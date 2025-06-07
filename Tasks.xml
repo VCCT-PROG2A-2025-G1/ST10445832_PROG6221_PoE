@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Tasks xmlns="">
 	<Task>
-		<Title>Test Task</Title>
-		<Description>This task is for testing purposes</Description>
-		<Reminder>2025-07-08T12:00:00</Reminder>
-		<Created>2025-07-08T12:00:00</Created>
+		<TaskNumber></TaskNumber>
+		<Title></Title>
+		<Description></Description>
+		<Reminder></Reminder>
+		<Created></Created>
 	</Task>
 </Tasks>
 
