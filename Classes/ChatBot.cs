@@ -30,16 +30,6 @@ namespace ST10445832_PROG6221_PoE.Classes
         private List<string> _answerHistory = new List<string>();
         private List<string> _activityLog = new List<string>();
 
-        private List<string> _stopWords = new List<string>
-        {
-            "a", "about", "actually", "almost", "also", "although", "always", "am", "an", "and", "any", "are", "as", "at",
-            "be", "became", "become", "but", "by", "can", "could", "did", "do", "does", "each", "either", "else", "for",
-            "from", "had", "has", "have", "hence", "how", "i", "if", "in", "is", "it", "its", "just", "may", "maybe",
-            "me", "might", "mine", "must", "my", "neither", "nor", "not", "of", "oh", "ok", "the", "then", "they", "when", "where", 
-            "whereas", "wherever", "whenever", "whether", "which", "while", "who", "whom", "whoever", "whose", "why", "will",
-            "with", "within", "without", "would", "yes", "yet", "you", "your"
-        };
-
         private List<string> _createTaskKeywords = new List<string> { "add", "create", "append", "make", "save", "remind me to" };
         private List<string> _readTaskKeywords = new List<string> { "show", "list", "view", "display", "output", "print" };
         private List<string> _updateTaskKeywords = new List<string> { "amend", "alter", "change", "update", "modify", "edit" };
@@ -49,6 +39,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         private string _quizPattern = @"quiz|game";
         private string _activityPattern = @"(?=display|show|list|print)(?=.*activity|activities).*";
 
+        // for tracking which mode the chatbot is in
         private enum ChatBotState
         {
             IDLE,
@@ -56,7 +47,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             HANDLE_TASK,
             ACTIVITY_LOG
         }
-
+        // for tracking which task action is active
         private enum TaskActionState
         {
             IDLE,
@@ -65,7 +56,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             UPDATE,
             DELETE
         }
-
+        // for tracking the steps of creating a new task
         private enum CreateTaskState
         {
             IDLE,
@@ -75,14 +66,30 @@ namespace ST10445832_PROG6221_PoE.Classes
             DESCRIPTION,
             CONFIRM
         }
-        // for storing task data while it is being gathered
-        private TaskReminder _tempTask;
-
-
+        // for tracking the steps of updating a new task
+        private enum UpdateTaskState
+        {
+            IDLE,
+            SELECTED,
+            UPDATE_TITLE,
+            UPDATE_REMINDER,
+            CONFIRM
+        }
+        // for tracking the steps of updating a new task
+        private enum DeleteTaskState
+        {
+            IDLE,
+            SELECTED,
+            CONFIRM
+        }
         // initialise states
-        private ChatBotState _currentState = ChatBotState.IDLE;
+        private ChatBotState _currentChatbotState = ChatBotState.IDLE;
         private TaskActionState _currentTaskState = TaskActionState.IDLE;
         private CreateTaskState _createTaskState = CreateTaskState.IDLE;
+        private UpdateTaskState _updateTaskState = UpdateTaskState.IDLE;
+        private DeleteTaskState _deleteTaskState = DeleteTaskState.IDLE;
+        // for storing task data while it is being gathered
+        private TaskReminder _tempTask;
 
         private Random _rand = new Random();
 
@@ -108,31 +115,31 @@ namespace ST10445832_PROG6221_PoE.Classes
            // intent recognition
             if (Regex.Match(userInput.Trim().ToLower(), _taskPattern).Success)
             {
-                _currentState = ChatBotState.HANDLE_TASK;
+                _currentChatbotState = ChatBotState.HANDLE_TASK;
             }
             else if (Regex.Match(processedInput, _quizPattern).Success)
             {
-                _currentState = ChatBotState.HANDLE_QUIZ;
+                _currentChatbotState = ChatBotState.HANDLE_QUIZ;
             }
             else if(Regex.Match(userInput.Trim().ToLower(), _activityPattern).Success)
             {
-                _currentState = ChatBotState.ACTIVITY_LOG;
+                _currentChatbotState = ChatBotState.ACTIVITY_LOG;
             }
 
             // take action based on state
-            if (_currentState == ChatBotState.IDLE)
+            if (_currentChatbotState == ChatBotState.IDLE)
             {
                 response = AnswerQuestion(processedInput);
             }
-            else if (_currentState == ChatBotState.HANDLE_QUIZ)
+            else if (_currentChatbotState == ChatBotState.HANDLE_QUIZ)
             {
                 response = HandleQuizQuery(userInput);
             }
-            else if (_currentState == ChatBotState.HANDLE_TASK)
+            else if (_currentChatbotState == ChatBotState.HANDLE_TASK)
             {
                 response = HandleTaskQuery(userInput);
             }
-            else if (_currentState == ChatBotState.ACTIVITY_LOG)
+            else if (_currentChatbotState == ChatBotState.ACTIVITY_LOG)
             {
                 response = DisplayActivityLog();
             }
@@ -179,21 +186,21 @@ namespace ST10445832_PROG6221_PoE.Classes
             // add opener to answer
             if (interestExpressed)
             {
-                answerLines.Insert(0, _botData.GetInterestOpener(_userInterest));
+                answerLines.Prepend(_botData.GetInterestOpener(_userInterest));
             }
             else if (_userInterest != null && keywordMatch != null && keywordMatch.Value == _userInterest)
             {
-                answerLines.Insert(0, _botData.RecallInterest(_userInterest)[_rand.Next(0, 8)]);
+                answerLines.Prepend(_botData.RecallInterest(_userInterest)[_rand.Next(0, 8)]);
             }
             else
             {
-                answerLines.Insert(0, GetSentimentOpener());
+                answerLines.Prepend(GetSentimentOpener());
             }
 
             // if user is following up and seems confused
             if ((_prevSentiment != _currentSentiment) && keywordMatch != null && (_currentSentiment == (int)BotData.Sentiment.CONFUSED))
             {
-                answerLines.Insert(0, "I understand, it can be confusing. Let me try to explain further.");
+                answerLines.Prepend("I understand, it can be confusing. Let me try to explain further.");
             }
 
             // add answer ending
@@ -333,9 +340,9 @@ namespace ST10445832_PROG6221_PoE.Classes
                 case TaskActionState.READ:
                     return ViewTask(userInput);
                 case TaskActionState.UPDATE:
-                    return "update task";
+                    return UpdateTask(userInput);
                 case TaskActionState.DELETE:
-                    return "delete task";
+                    return DeleteTask(userInput);
                 default:
                     return "No task action recognised.";
             }
@@ -347,6 +354,15 @@ namespace ST10445832_PROG6221_PoE.Classes
         // the new task
         private string AddTask(string userInput)
         {
+            // allow the user to terminate the process
+            if (PreProcess(userInput).Equals("cancel"))
+            {
+                _createTaskState = CreateTaskState.IDLE;
+                _currentTaskState = TaskActionState.IDLE;
+                _currentChatbotState = ChatBotState.IDLE;
+                return "Alright. I have stopped with the creation of a new task.\n" + GetFollowUp("");
+            }
+
             // set title
             if (_createTaskState == CreateTaskState.IDLE)
             {
@@ -375,6 +391,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                 _tempTask.Title = userInput;
                 _createTaskState = CreateTaskState.REMINDER;
             }
+
             // set reminder
             if (_createTaskState == CreateTaskState.REMINDER)
             {
@@ -416,45 +433,218 @@ namespace ST10445832_PROG6221_PoE.Classes
             // save task
             if (_createTaskState == CreateTaskState.CONFIRM)
             {
+                _tempTask.TaskNumber = _botData.Tasks.Last().TaskNumber + 1;
                 _botData.Tasks.Add(_tempTask);
                 _botData.UpdateTasks();
                 // return state to idle
-                _createTaskState = CreateTaskState.IDLE;
-                _currentState = ChatBotState.IDLE;
+                _createTaskState = CreateTaskState.IDLE;  // reset task creation state
+                _currentTaskState = TaskActionState.IDLE; // reset CRUD action
+                _currentChatbotState = ChatBotState.IDLE;        // reset bot mode
                 _activityLog.Add($"Task created: {_tempTask.Description}.");
                 return $"Task created: {_tempTask.Description}.\nIf I can help in any other way, please don't hesitate to ask.";
             }
-            return "Unfortunately I am unable to add tasks at this time. Please try again at a later date.";
+
+            return $"Sorry {_botData.UserName}. Unfortunately I am unable to add tasks at this time. Please try again at a later date.\n" + GetFollowUp("");
         }
 
         private string ViewTask(string userInput)
         {
 
-            // If no tasks exist
+            // let the user know if there are no tasks
+            if (_botData.Tasks == null || _botData.Tasks.Count == 0)
+            {
+                return "You have no tasks saved.\nYou can add a task by saying \"Remind me to <Task Name> <Integer> <Unit of time> from now\" (time is optional)";
+            }
+
+            // list all tasks
+            string allTasks = "Certainly!\nHere are your current tasks:\n\n";
+            foreach (TaskReminder task in _botData.Tasks)
+            {
+                allTasks += $"Task Number: {task.TaskNumber}\nTitle: {task.Title}\nReminder: {(task.Reminder != DateTime.MinValue ? task.Reminder.ToString() : "none")}\n\n";
+            }
+            _activityLog.Add("Displayed existing tasks.");
+            _currentChatbotState = ChatBotState.IDLE;
+            _currentTaskState = TaskActionState.IDLE;
+            return allTasks + GetFollowUp("");
+        }
+
+        private string UpdateTask(string userInput)
+        {
+            // let the user know if there are no tasks
             if (_botData.Tasks == null || _botData.Tasks.Count == 0)
             {
                 return "You have no tasks saved.\nYou can add a task by saying \"Remind me to ABC XY minutes from now\" (time is optional)";
             }
 
-            // If no specific match, list all tasks
-            string allTasks = "Here are your current tasks:\n";
-            foreach (TaskReminder task in _botData.Tasks)
+            // allow the user to terminate the process
+            if (PreProcess(userInput).Equals("cancel"))
             {
-                allTasks += $"- {task.Title}, Reminder: {(task.Reminder != DateTime.MinValue ? task.Reminder.ToString() : "none")}\n";
+                _updateTaskState = UpdateTaskState.IDLE;
+                _currentTaskState = TaskActionState.IDLE;
+                _currentChatbotState = ChatBotState.IDLE;
+                return "Alright. I have stopped with the creation of a new task.\n" + GetFollowUp("");
             }
-            _activityLog.Add("Displayed existing tasks.");
-            _currentState = ChatBotState.IDLE;
-            return allTasks + GetFollowUp("");
+
+            // look for the task
+            if (_updateTaskState == UpdateTaskState.IDLE)
+            {
+                var taskNumberRegex = Regex.Match(PreProcess(userInput), @"\d+");
+                if (taskNumberRegex.Success)
+                {
+                    var results = _botData.Tasks.Where(task => task.TaskNumber == int.Parse(taskNumberRegex.Value)).ToList();
+
+                    if (results.Count == 1)
+                    {
+                        _tempTask = results[0];
+                        _updateTaskState = UpdateTaskState.SELECTED;
+                        return $"Perfect! I have found task {_tempTask.TaskNumber}.\nWould you like to update the title or reminder?";
+                    }
+                    else
+                    {
+                        return $"Hmm. I was unable to find any task with the task number \"{taskNumberRegex.Value}\".\nPlease double-check the task number and try again.";
+                    }
+                }
+                else
+                {
+                    return "Please enter the task number of the task you want to update.";
+                }
+            }
+
+            // request which field to update
+            if (_updateTaskState == UpdateTaskState.SELECTED)
+            {
+                var taskFieldUpdateRegex = Regex.Match(PreProcess(userInput), @"\btitle\b|\breminder\b");
+                if (taskFieldUpdateRegex.Success && taskFieldUpdateRegex.Value.Trim().Equals("title"))
+                {
+                    _updateTaskState = UpdateTaskState.UPDATE_TITLE;
+                    return "Let's get that title changed!\nWhat would you like the new title to be?";
+                }
+                else if (taskFieldUpdateRegex.Success && taskFieldUpdateRegex.Value.Trim().Equals("reminder"))
+                {
+                    _updateTaskState = UpdateTaskState.UPDATE_REMINDER;
+                    return "Let's update that reminder!\nWhen would you like to set the reminder for?\n";
+                }
+                else
+                {
+                    return $"I'm sorry {_botData.UserName}, I didn't quite catch that. Did you want to change the title or the reminder?";
+                }
+
+            }
+
+            // update the selected field
+            if (_updateTaskState == UpdateTaskState.UPDATE_TITLE)
+            {
+                _tempTask.Title = userInput;
+                _updateTaskState = UpdateTaskState.CONFIRM;
+            }
+
+            if (_updateTaskState == UpdateTaskState.UPDATE_REMINDER)
+            {
+                if (!GetTime(userInput))
+                {
+                    return $"Sorry {_botData.UserName}. Unfortunately I don't understand when you want to be reminded.\n Please enter re-enter and make sure to " +
+                        $"follow the correct format; eg. \"2 hours from now\"";
+                }
+                else
+                {
+                    _updateTaskState = UpdateTaskState.CONFIRM;
+                }
+            }
+
+            // save the changes
+            if (_updateTaskState == UpdateTaskState.CONFIRM)
+            {
+                var indexToUpdate = _botData.Tasks.IndexOf(_botData.Tasks.Where(task => task.TaskNumber == _tempTask.TaskNumber).First());
+                _botData.Tasks[indexToUpdate] = _tempTask;
+                _updateTaskState = UpdateTaskState.CONFIRM;
+                _currentTaskState = TaskActionState.IDLE;
+                _currentChatbotState = ChatBotState.IDLE;
+                _botData.UpdateTasks();
+                return $"All done. I have updated task {_tempTask.TaskNumber} as you have requested.\n" + GetFollowUp("");
+            }
+
+            return "Oh dear. Something has gone horribly wrong and I was unable to carry out your request.\nPlease accept my apologies\n" + GetFollowUp("");
         }
 
-        private void UpdateTask(string userInput)
+        private string DeleteTask(string userInput)
         {
+            // let the user know if there are no tasks
+            if (_botData.Tasks == null || _botData.Tasks.Count == 0)
+            {
+                return "You have no tasks saved.\nYou can add a task by saying \"Remind me to ABC XY minutes from now\" (time is optional)";
+            }
 
-        }
+            // allow the user to terminate the process
+            if (PreProcess(userInput).Equals("cancel"))
+            {
+                _deleteTaskState = DeleteTaskState.IDLE;
+                _currentTaskState = TaskActionState.IDLE;
+                _currentChatbotState = ChatBotState.IDLE;
+                return "Alright. I have stopped with the deletion of the task.\n" + GetFollowUp("");
+            }
 
-        private void DeleteTask(string userInput)
-        {
-
+            // try to find task
+            if (_deleteTaskState == DeleteTaskState.IDLE)
+            {
+                var taskNumberRegex = Regex.Match(PreProcess(userInput), @"\d+");
+                if (taskNumberRegex.Success)
+                {
+                    var results = _botData.Tasks.Where(task => task.TaskNumber == int.Parse(taskNumberRegex.Value)).ToList();
+                    // request delete confirmation
+                    if (results.Count == 1)
+                    {
+                        _tempTask = results[0];
+                        _deleteTaskState = DeleteTaskState.SELECTED;
+                        return $"You have asked me to delete task {_tempTask.TaskNumber}.\n" +
+                            $"Title: {_tempTask.Title}\nReminder: {_tempTask.Reminder}.\n\n" +
+                            "Please confirm (yes/no)";
+                    }
+                    else
+                    {
+                        return $"Hmm. I was unable to find any task with the task number \"{taskNumberRegex.Value}\".\nPlease double-check the task number and try again.";
+                    }
+                }
+                else
+                {
+                    return "Please enter the task number of the task you want to delete.";
+                }
+            }
+            // check for confirmation
+            if (_deleteTaskState == DeleteTaskState.SELECTED)
+            {
+                var confirmDeleteRegex = Regex.Match(PreProcess(userInput), @"\byes\b|\bno\b");
+                if (confirmDeleteRegex.Success && confirmDeleteRegex.Value.Trim().Equals("yes"))
+                {
+                    _deleteTaskState = DeleteTaskState.CONFIRM;
+                }
+                else if (confirmDeleteRegex.Success && confirmDeleteRegex.Value.Trim().Equals("no"))
+                {
+                    _deleteTaskState = DeleteTaskState.IDLE;
+                    return $"That's no problem. I won't delete task {_tempTask.TaskNumber}.\n" + GetFollowUp("");
+                }
+                else
+                {
+                    return $"Sorry {_botData.UserName}, I don't understand your response.\n Would you like to continue and delete task {_tempTask.TaskNumber}? (yes/no)";
+                }
+            }
+            // try to delete task
+            if (_deleteTaskState == DeleteTaskState.CONFIRM)
+            {
+                if (_botData.Tasks.Remove(_botData.Tasks.Where(task => task.TaskNumber == _tempTask.TaskNumber).First()))
+                {
+                    _deleteTaskState = DeleteTaskState.IDLE;
+                    _currentTaskState = TaskActionState.IDLE;
+                    _currentChatbotState = ChatBotState.IDLE;
+                    _botData.UpdateTasks();
+                    return $"Task {_tempTask.TaskNumber} has been successfully deleted!\n" + GetFollowUp("");
+                }
+                else
+                {
+                    return $"Oops. Something went wrong when I tried to delete task {_tempTask.TaskNumber}.\n" +
+                        "I have aborted the process.\n" + GetFollowUp("");
+                }
+            }
+            return "Oh dear. Something has gone horribly wrong and I was unable to carry out your request.\nPlease accept my apologies\n" + GetFollowUp("");
         }
 
 
@@ -487,7 +677,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
             // reorder acitivity log
             _activityLog.Reverse();
-            _currentState = ChatBotState.IDLE;
+            _currentChatbotState = ChatBotState.IDLE;
             return "Sure thing!\nHere are the recently logged activities.\n" + response + GetFollowUp("");
         }
 
@@ -501,10 +691,6 @@ namespace ST10445832_PROG6221_PoE.Classes
             question = question.Trim().ToLower();
             // remove punctuation
             question = new string(question.Where(ch => !char.IsPunctuation(ch)).ToArray());
-            // remove stop words
-            var tokenised = question.Split(' ');
-            var noStop = tokenised.Where(word => !_stopWords.Contains(word));
-            question = string.Join(" ", noStop);
             return question;
         }
 

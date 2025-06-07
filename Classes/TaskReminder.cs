@@ -22,6 +22,8 @@ namespace ST10445832_PROG6221_PoE.Classes
 
     public class TaskReminder
     {
+        [XmlElement("TaskNumber")]
+        public int TaskNumber { get; set; }
         [XmlElement("Title")]
         public string Title { get; set; }
         [XmlElement("Description")]
