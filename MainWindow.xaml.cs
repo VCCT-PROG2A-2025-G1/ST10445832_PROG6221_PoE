@@ -4,7 +4,6 @@
 // https://learn.microsoft.com/en-us/dotnet/api/system.windows.messageboxbutton?view=netframework-4.8
 
 
-
 using ST10445832_PROG6221_PoE.Classes;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -23,13 +22,12 @@ namespace ST10445832_PROG6221_PoE
         public ObservableCollection<ChatMessage> ChatMessages { get; set; }
         public MainWindow()
         {
+            InitializeComponent();
             ChatMessages = new ObservableCollection<ChatMessage>();
             this.DataContext = this;
-            InitializeComponent();
             IntroPanel.Visibility = Visibility.Collapsed;
             MenuPanel.Visibility = Visibility.Collapsed;
             ChatPanel.Visibility = Visibility.Collapsed;
-            TaskPanel.Visibility = Visibility.Collapsed;
             HelpPanel.Visibility = Visibility.Collapsed;
             WelcomePanel.Visibility = Visibility.Collapsed;
         }
@@ -46,14 +44,13 @@ namespace ST10445832_PROG6221_PoE
         {
             IntroPanel.Visibility = Visibility.Visible;
             ChangeViewSwipe(BootPanel, IntroPanel);
-            TitleLabel.Visibility = Visibility.Visible;
         }
 
         private void UserNameContinue_Click(object sender, RoutedEventArgs e)
         {
             if (!(UserNameInput.Text.Trim().Length > 0))
             {
-                MessageBox.Show("Please enter a valid name.", "Invalid Input");
+                MessageBox.Show("Please enter a valid name.", "Invalid Name");
             }
             else
             {
@@ -80,13 +77,6 @@ namespace ST10445832_PROG6221_PoE
                 ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"Hello {_userName}. What would you like to know?" });
                 await ChatMessages[ChatMessages.Count - 1].TypeMessage();
             }
-        }
-
-        private void Tasks_Click(object sender, RoutedEventArgs e)
-        {
-            MenuPanel.Visibility = Visibility.Collapsed;
-            TaskPanel.Visibility = Visibility.Visible;
-            _currentPanel = TaskPanel;
         }
 
         private void Help_Click(object sender, RoutedEventArgs e)
