@@ -33,9 +33,15 @@ namespace ST10445832_PROG6221_PoE.Classes
         [XmlElement("Created")]
         public DateTime Created { get; set; }
         public string OriginalInput { get; set; }
+        public bool Completed { get; set; }
 
+        //=========================//
+        // Default constructor
         public TaskReminder() { }
 
+
+        //========================//
+        // Optional constructor
         public TaskReminder(string title, string description, DateTime reminder)
         {
             Title = title;
