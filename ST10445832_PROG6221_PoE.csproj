@@ -59,6 +59,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\BoolQuestion.cs" />
+    <Compile Include="Classes\MultipleChoiceQuestion.cs" />
     <Compile Include="Classes\TaskReminder.cs" />
     <Page Include="Resources\Animations.xaml">
       <Generator>MSBuild:Compile</Generator>

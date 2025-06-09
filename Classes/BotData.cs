@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace ST10445832_PROG6221_PoE.Classes
@@ -47,9 +48,18 @@ namespace ST10445832_PROG6221_PoE.Classes
             CONFUSED = 4,
             NEUTRAL = 5
         };
-
-        private string TasksDataPath = "Tasks.xml";
+        // path for task storage
+        private string _tasksDataPath = "Tasks.xml";
         public ObservableCollection<TaskReminder> Tasks { get; set; }
+
+        // Quiz Fields
+        private List<MultipleChoiceQuestion> _multipleChoiceQuestions;
+        private List<BoolQuestion> _boolQuestions;
+        public int QuestionCounter = 0;
+        public int CorrectAnswers = 0;
+        public List<Object> RoundQuestions;
+
+        private Random _rand = new Random();
 
         //=========================================================//
         // Default constructor
@@ -61,13 +71,17 @@ namespace ST10445832_PROG6221_PoE.Classes
             InitialiseOpeners();
             InitialiseFollowUps();
             InitialiseSentimentWords();
+            InitialiseQuizQuestions();
             Tasks = new ObservableCollection<TaskReminder>();
             LoadTasks();
         }
 
+
+        //=========================================================//
+        // Loads tasks from xml file
         private void LoadTasks()
         {
-            if (File.Exists(TasksDataPath))
+            if (File.Exists(_tasksDataPath))
             {
                 try
                 {
@@ -75,7 +89,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                     XmlRootAttribute rootAttribute = new XmlRootAttribute("Tasks");
                     rootAttribute.Namespace = "";
                     XmlSerializer xmlSerial = new XmlSerializer(typeof(TasksStore), rootAttribute);
-                    using (FileStream fs = new FileStream(TasksDataPath, FileMode.Open))
+                    using (FileStream fs = new FileStream(_tasksDataPath, FileMode.Open))
                     {
                         var tasksStore = (TasksStore)xmlSerial.Deserialize(fs);
                         if (tasksStore != null && tasksStore.Tasks.Count > 0)
@@ -98,7 +112,8 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
         }
 
-
+        //===============================================//
+        // saves items from Tasks list an xml file
         public void UpdateTasks()
         {
             TasksStore newTasksStore = new TasksStore();
@@ -111,7 +126,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                 XmlRootAttribute rootAttribute = new XmlRootAttribute("Tasks");
                 rootAttribute.Namespace = "";
                 XmlSerializer xmlSerial = new XmlSerializer(typeof(TasksStore), rootAttribute);
-                using (FileStream fs = new FileStream(TasksDataPath, FileMode.Create))
+                using (FileStream fs = new FileStream(_tasksDataPath, FileMode.Create))
                 {
                     xmlSerial.Serialize(fs, newTasksStore);
                 }
@@ -761,6 +776,211 @@ namespace ST10445832_PROG6221_PoE.Classes
                     break;
             }
             return topic;
+        }
+
+
+        //========================================================//
+        // Populates the quiz questions list
+        private void InitialiseQuizQuestions()
+        {
+            _multipleChoiceQuestions = new List<MultipleChoiceQuestion>
+            {
+                new MultipleChoiceQuestion
+                {
+                    Question = "What does the acronym 'VPN' stand for?",
+                    Choices = new List<string> { "Virtual Private Network", "Virtual Protected Network", "Verified Private Network", "Variable Proxy Node" },
+                    Answer = "A",
+                    Explanation = "A VPN encrypts your internet traffic and routes it through a secure server to protect your identity and data."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "Which of the following is considered a strong password?",
+                    Choices = new List<string> { "12345678", "password", "P@ssw0rd#2024", "qwerty" },
+                    Answer = "C",
+                    Explanation = "Strong passwords use a mix of upper/lowercase letters, numbers, and special characters to increase complexity."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What type of attack involves tricking users into giving up personal information?",
+                    Choices = new List < string > { "Phishing", "DDoS", "Brute force", "Spoofing" },
+                    Answer = "A",
+                    Explanation = "Phishing deceives users with fake emails or sites to steal credentials or financial data."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is the purpose of a firewall?",
+                    Choices = new List < string > { "Encrypt data", "Prevent unauthorized access", "Back up data", "Monitor employee activity" },
+                    Answer = "B",
+                    Explanation = "Firewalls monitor and control network traffic, allowing or blocking traffic based on security rules."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "Which is a form of malware that locks you out of your files and demands payment?",
+                    Choices = new List < string >    { "Spyware", "Ransomware", "Trojan", "Adware" },
+                    Answer = "B",
+                    Explanation = "Ransomware encrypts your files and demands payment (usually in cryptocurrency) to restore access."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What does HTTPS indicate in a website URL?",
+                    Choices = new List < string > { "The site is hosted on a cloud server", "The site is secure", "The site is fast", "The site is blocked" },
+                    Answer = "B",
+                    Explanation = "HTTPS uses SSL/TLS encryption, ensuring that data between your browser and the website is protected."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "Which one is NOT a type of multi-factor authentication?",
+                    Choices = new List < string > { "Password", "Security token", "Fingerprint", "Firewall" },
+                    Answer = "D",
+                    Explanation = "Firewalls are network security tools, not a method of identity verification like MFA."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is social engineering in cybersecurity?",
+                    Choices = new List < string > { "Hardware manipulation", "Manipulating people to gain access", "Network routing", "Using software exploits" },
+                    Answer = "B",
+                    Explanation = "Social engineering relies on human error or trust rather than technical exploits to gain unauthorized access."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is a zero-day vulnerability?",
+                    Choices = new List < string > { "A fully patched system", "A known bug", "An unknown and unpatched flaw", "A software update" },
+                    Answer = "C",
+                    Explanation = "Zero-days are security holes that are unknown to vendors and exploited before they’re patched."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is a brute-force attack?",
+                    Choices = new List < string > { "Trying many passwords until one works", "Destroying hardware", "Flooding a network", "Hijacking a browser" },
+                    Answer = "A",
+                    Explanation = "It involves systematically guessing passwords until the correct one is found."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What does 'DDoS' stand for?",
+                    Choices = new List < string > { "Distributed Denial of Service", "Data Distribution over Systems", "Direct Data over Servers", "Dynamic Defense of Security" },
+                    Answer = "A",
+                    Explanation = "A DDoS attack overwhelms a system with traffic from multiple sources to make it unavailable."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is the main role of an antivirus program?",
+                    Choices = new List < string > { "Back up data", "Prevent hacking", "Detect and remove malware", "Encrypt files" },
+                    Answer = "C",
+                    Explanation = "Antivirus software scans systems for malicious files and helps remove them."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is two-factor authentication?",
+                    Choices = new List < string > { "Logging in from two devices", "Using two passwords", "Using two different types of credentials", "Scanning your computer twice" },
+                    Answer = "C",
+                    Explanation = "2FA requires something you know (password) and something you have (token) or are (biometric)."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is a common sign of a phishing email?",
+                    Choices = new List < string > { "A personal message from a friend", "Generic greetings and urgent language", "Correct grammar and spelling", "From a known business" },
+                    Answer = "B",
+                    Explanation = "Phishing emails often use vague salutations and scare tactics to trick recipients into clicking links."
+                }
+            };
+
+            _boolQuestions = new List<BoolQuestion>
+            {
+                new BoolQuestion
+                {
+                    Question = "Using 'password' as your password is secure.",
+                    Answer = false,
+                    Explanation = "'password' is one of the most common and weakest passwords. It can be easily guessed or cracked."
+                },
+                new BoolQuestion
+                {
+                    Question = "Antivirus software can help detect and remove malware.",
+                    Answer = true,
+                    Explanation = "Antivirus programs are designed to identify, block, and remove malware from your system."
+                },
+                new BoolQuestion
+                {
+                    Question = "Phishing attacks can only occur through email.",
+                    Answer = false,
+                    Explanation = "Phishing can happen via email, text messages, phone calls, or even social media messages."
+                },
+                new BoolQuestion
+                {
+                    Question = "A firewall can help block unauthorized access to your network.",
+                    Answer = true,
+                    Explanation = "Firewalls act as a barrier between your network and potential threats from outside sources."
+                },
+                new BoolQuestion
+                {
+                    Question = "It's safe to use public Wi-Fi for online banking without a VPN.",
+                    Answer = false,
+                    Explanation = "Public Wi-Fi networks are insecure, and without a VPN, your data can be intercepted by attackers."
+                },
+                new BoolQuestion
+                {
+                    Question = "Ransomware can encrypt your files and demand payment.",
+                    Answer = true,
+                    Explanation = "Ransomware locks your files with encryption and demands payment to provide the decryption key."
+                },
+                new BoolQuestion
+                {
+                    Question = "Two-factor authentication adds an extra layer of security.",
+                    Answer = true,
+                    Explanation = "2FA adds a second form of identity verification, making it harder for attackers to access your account."
+                },
+                new BoolQuestion
+                {
+                    Question = "HTTPS is less secure than HTTP.",
+                    Answer = false,
+                    Explanation = "HTTPS is more secure than HTTP because it encrypts the data sent between your browser and the server."
+                },
+                new BoolQuestion
+                {
+                    Question = "It's okay to reuse the same password across multiple sites.",
+                    Answer = false,
+                    Explanation = "Reusing passwords makes you vulnerable to credential stuffing attacks if one site is compromised."
+                },
+                new BoolQuestion
+                {
+                    Question = "Software updates can fix security vulnerabilities.",
+                    Answer = true,
+                    Explanation = "Updates often include patches for known security flaws, protecting your system from exploits."
+                }
+            };
+        }
+
+
+        //================================================//
+        // Populates RoundQuestions with five random
+        // multiple choice and five random true/false 
+        // questions
+        public void SetRoundQuestions()
+        {
+            // get 5 random questions of each type
+            var multipleChoice = _multipleChoiceQuestions.OrderBy(q => _rand.Next()).Take(5);
+            var trueFalse = _boolQuestions.OrderBy(q =>  _rand.Next()).Take(5);
+            var roundQuestions = new List<object>();
+
+            foreach(var q in multipleChoice)
+            {
+                roundQuestions.Add(q);
+            }
+
+            foreach (var q in trueFalse)
+            {
+                roundQuestions.Add(q);
+            }
+            // shuffle questions
+            RoundQuestions = roundQuestions.OrderBy(q => _rand.Next()).Take(10).ToList();
+        }
+
+
+        //================================================//
+        // Returns the score (%) of the latest quiz round
+        public double GetRoundScore()
+        {
+            return CorrectAnswers / (RoundQuestions.Count / 100);
         }
     }
 }

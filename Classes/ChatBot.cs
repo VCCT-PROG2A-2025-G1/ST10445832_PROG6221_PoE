@@ -11,9 +11,11 @@ using FuzzySharp;
 using FuzzySharp.SimilarityRatio;
 using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ST10445832_PROG6221_PoE.Classes
@@ -36,7 +38,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         private List<string> _deleteTaskKeywords = new List<string> { "remove", "delete", "discard", "trash", "dispose" };
 
         private string _taskPattern = @"\b(?:add|create|append|make|save|show|list|view|display|output|give|amend|alter|change|update|modify|edit|remove|delete|discard|trash|dispose).*\b(?:tasks?|reminders?)\b|\b(remind me to)\b";
-        private string _quizPattern = @"quiz|game";
+        private string _quizPattern = @"quiz|game|mini-game";
         private string _activityPattern = @"(?=display|show|list|print)(?=.*activity|activities).*";
 
         // for tracking which mode the chatbot is in
@@ -82,12 +84,21 @@ namespace ST10445832_PROG6221_PoE.Classes
             SELECTED,
             CONFIRM
         }
+        // for tracking quiz state
+        private enum QuizState
+        {
+            IDLE,
+            QUESTION,
+            ANSWER,
+            FEEDBACK
+        }
         // initialise states
         private ChatBotState _currentChatbotState = ChatBotState.IDLE;
         private TaskActionState _currentTaskState = TaskActionState.IDLE;
         private CreateTaskState _createTaskState = CreateTaskState.IDLE;
         private UpdateTaskState _updateTaskState = UpdateTaskState.IDLE;
         private DeleteTaskState _deleteTaskState = DeleteTaskState.IDLE;
+        private QuizState _quizState = QuizState.IDLE;
         // for storing task data while it is being gathered
         private TaskReminder _tempTask;
 
@@ -198,7 +209,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
 
             // if user is following up and seems confused
-            if ((_prevSentiment != _currentSentiment) && keywordMatch != null && (_currentSentiment == (int)BotData.Sentiment.CONFUSED))
+            if ((_prevSentiment != _currentSentiment) && keywordMatch != null && (_currentSentiment == (int) BotData.Sentiment.CONFUSED))
             {
                 answerLines.Prepend("I understand, it can be confusing. Let me try to explain further.");
             }
@@ -350,7 +361,7 @@ namespace ST10445832_PROG6221_PoE.Classes
 
 
         //==============================================================//
-        // goes through the process of collecting task details and saves
+        // Handles the process of collecting task details and saves
         // the new task
         private string AddTask(string userInput)
         {
@@ -367,6 +378,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             if (_createTaskState == CreateTaskState.IDLE)
             {
                 _tempTask = new TaskReminder();
+                _tempTask.Completed = false;
                 _tempTask.OriginalInput = userInput;
                 userInput = userInput.Trim().ToLower();
                 // set task details
@@ -420,13 +432,13 @@ namespace ST10445832_PROG6221_PoE.Classes
             // set description
             if (_createTaskState == CreateTaskState.DESCRIPTION)
             {
-                if (_tempTask.Reminder != new DateTime())
+                if (_tempTask.Reminder != DateTime.MinValue)
                 {
                     _tempTask.Description = $"Task: \'{_tempTask.Title}\', Reminder: {_tempTask.Reminder.ToString()}";
                 }
                 else
                 {
-                    _tempTask.Description = $"Task \'{_tempTask.Title}\', Reminder: none";
+                    _tempTask.Description = $"Task: \'{_tempTask.Title}\', Reminder: none";
                 }
                 _createTaskState = CreateTaskState.CONFIRM;
             }
@@ -439,14 +451,18 @@ namespace ST10445832_PROG6221_PoE.Classes
                 // return state to idle
                 _createTaskState = CreateTaskState.IDLE;  // reset task creation state
                 _currentTaskState = TaskActionState.IDLE; // reset CRUD action
-                _currentChatbotState = ChatBotState.IDLE;        // reset bot mode
+                _currentChatbotState = ChatBotState.IDLE; // reset bot mode
                 _activityLog.Add($"Task created: {_tempTask.Description}.");
-                return $"Task created: {_tempTask.Description}.\nIf I can help in any other way, please don't hesitate to ask.";
+                return $"Task created!\n{_tempTask.Description}.\nIf I can help in any other way, please don't hesitate to ask.";
             }
 
             return $"Sorry {_botData.UserName}. Unfortunately I am unable to add tasks at this time. Please try again at a later date.\n" + GetFollowUp("");
         }
 
+
+        //=========================================================//
+        // Returns a string containing all existing tasks (if there
+        // are any)
         private string ViewTask(string userInput)
         {
 
@@ -458,9 +474,10 @@ namespace ST10445832_PROG6221_PoE.Classes
 
             // list all tasks
             string allTasks = "Certainly!\nHere are your current tasks:\n\n";
-            foreach (TaskReminder task in _botData.Tasks)
+            foreach (TaskReminder task in _botData.Tasks.Where(t=>t.Completed==false).ToList())
             {
-                allTasks += $"Task Number: {task.TaskNumber}\nTitle: {task.Title}\nReminder: {(task.Reminder != DateTime.MinValue ? task.Reminder.ToString() : "none")}\n\n";
+                allTasks += $"Task Number: {task.TaskNumber}\nTitle: {task.Title}\nReminder: {(task.Reminder != DateTime.MinValue ? task.Reminder.ToString() : "none")}\n" +
+                    $"Status: {(task.Completed ? "Completed" : "Active")}\n\n";
             }
             _activityLog.Add("Displayed existing tasks.");
             _currentChatbotState = ChatBotState.IDLE;
@@ -468,6 +485,9 @@ namespace ST10445832_PROG6221_PoE.Classes
             return allTasks + GetFollowUp("");
         }
 
+
+        //=======================================================//
+        // Handles the process of updating a task
         private string UpdateTask(string userInput)
         {
             // let the user know if there are no tasks
@@ -497,7 +517,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                     {
                         _tempTask = results[0];
                         _updateTaskState = UpdateTaskState.SELECTED;
-                        return $"Perfect! I have found task {_tempTask.TaskNumber}.\nWould you like to update the title or reminder?";
+                        return $"Perfect! I have found task {_tempTask.TaskNumber}.\nWould you like to update the title, reminder, or mark as completed?";
                     }
                     else
                     {
@@ -523,6 +543,11 @@ namespace ST10445832_PROG6221_PoE.Classes
                 {
                     _updateTaskState = UpdateTaskState.UPDATE_REMINDER;
                     return "Let's update that reminder!\nWhen would you like to set the reminder for?\n";
+                }
+                else if(Regex.Match(PreProcess(userInput), @"\bmark\b .* \bcompleted?\b").Success)
+                {
+                    _updateTaskState = UpdateTaskState.CONFIRM;
+                    _tempTask.Completed = true;
                 }
                 else
                 {
@@ -556,7 +581,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             {
                 var indexToUpdate = _botData.Tasks.IndexOf(_botData.Tasks.Where(task => task.TaskNumber == _tempTask.TaskNumber).First());
                 _botData.Tasks[indexToUpdate] = _tempTask;
-                _updateTaskState = UpdateTaskState.CONFIRM;
+                _updateTaskState = UpdateTaskState.IDLE;
                 _currentTaskState = TaskActionState.IDLE;
                 _currentChatbotState = ChatBotState.IDLE;
                 _botData.UpdateTasks();
@@ -566,6 +591,9 @@ namespace ST10445832_PROG6221_PoE.Classes
             return "Oh dear. Something has gone horribly wrong and I was unable to carry out your request.\nPlease accept my apologies\n" + GetFollowUp("");
         }
 
+
+        //=======================================================//
+        // Handles the process of deleting a task
         private string DeleteTask(string userInput)
         {
             // let the user know if there are no tasks
@@ -650,15 +678,190 @@ namespace ST10445832_PROG6221_PoE.Classes
 
         //=================================== QUIZ METHODS ===================================//
 
+        //=================================================//
+        // routing based on current quiz state
         private string HandleQuizQuery(string userInput)
         {
-            string response = "quiz time!";
-            return response;
+            // allow the user to end the quiz
+            if (PreProcess(userInput).Equals("cancel"))
+            {
+                _currentChatbotState = ChatBotState.IDLE;
+                _quizState = QuizState.IDLE;
+                _activityLog.Add($"Quiz aborted on question {_botData.QuestionCounter+1}");
+                _botData.CorrectAnswers = 0;
+                _botData.QuestionCounter = 0;
+                return "Alright. I have terminated this round of the quiz.\n" + GetFollowUp("");
+            }
+            switch (_quizState)
+                {
+                    case QuizState.IDLE:
+                        return QuizIntro();
+                    case QuizState.QUESTION:
+                        return AskQuestion();
+                    case QuizState.ANSWER:
+                        return CheckAnswer(userInput);
+                    case QuizState.FEEDBACK:
+                        return EndQuiz();
+                    default:
+                        return "No task action recognised.";
+                }
+        }
+
+
+        //==================================================//
+        // Initialises Quiz questions and explains the rules
+        private string QuizIntro()
+        {
+            _botData.SetRoundQuestions();
+            _quizState = QuizState.QUESTION;
+            return "So you want to test your knowledge of cybersecurity? Excellent!\n\n" +
+                "You will be asked 10 questions - multiple choice and true/false.\n" +
+                "To answer a multiple choice question, enter the letter which corresponds with" +
+                " the answer you wish to select (eg. A).\n" +
+                "To answer a true/false question, enter either \"true\" or \"false\".\n\n" +
+                "Let me know when you are ready to begin!";
+        }
+
+
+        //==================================================================//
+        // Reutrns the next quiz question in the correct format for its type
+        private string AskQuestion()
+        {
+
+            var question = _botData.RoundQuestions[_botData.QuestionCounter];
+            string output = "";
+            if (question.GetType() == typeof(MultipleChoiceQuestion))
+            {
+                var q = (MultipleChoiceQuestion) question;
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"Question: {q.Question}");
+                sb.AppendLine($"A) {q.Choices[0]}");
+                sb.AppendLine($"B) {q.Choices[1]}");
+                sb.AppendLine($"C) {q.Choices[2]}");
+                sb.AppendLine($"D) {q.Choices[3]}");
+                output = sb.ToString();
+            }
+            else
+            {
+                var q = (BoolQuestion) question;
+                output = $"True or False: {q.Question}";
+            }
+            _quizState = QuizState.ANSWER;
+            return output;
+        }
+
+
+        //==================================================================//
+        // Checks the user's quiz question answer and returns feedback
+        private string CheckAnswer(string userInput)
+        {
+            var question = _botData.RoundQuestions[_botData.QuestionCounter];
+            var output = "";
+            if (question.GetType() == typeof(MultipleChoiceQuestion))
+            {
+                var q = (MultipleChoiceQuestion)question;
+                var qRegex = Regex.Match(userInput.Trim().ToUpper(), @"\b[ABCD]\b");
+                if (qRegex.Success && (qRegex.Value == q.Answer))
+                {
+                    _quizState = QuizState.QUESTION;
+                    output = $"Correct!\n{q.Explanation}.";
+                    _botData.CorrectAnswers++;
+                }
+                else if (qRegex.Success && (qRegex.Value != q.Answer))
+                {
+                    _quizState = QuizState.QUESTION;
+                    output = $"Unfortunately that isn't the correct answer.\nThe correct answer was {q.Answer}.\n{q.Explanation}";
+                }
+                else
+                {
+                    return "Whoops.. You didn't enter a valid answer. Please try again.";
+                }
+            }
+            else
+            {
+                var q = (BoolQuestion)question;
+                var qRegex = Regex.Match(userInput.Trim().ToLower(), @"\btrue|false\b");
+                if (qRegex.Success && (bool.Parse(qRegex.Value) == q.Answer))
+                {
+                    _quizState = QuizState.QUESTION;
+                    output = $"Correct! That statement is {q.Answer}.\n{q.Explanation}.";
+                    _botData.CorrectAnswers++;
+                }
+                else if (qRegex.Success && (bool.Parse(qRegex.Value) != q.Answer))
+                {
+                    _quizState = QuizState.QUESTION;
+                    output = $"Unfortunately not. That statement is {q.Answer}.\n{q.Explanation}";
+                }
+                else
+                {
+                    return "Whoops.. You didn't enter a valid answer. Please try again.";
+                }
+            }
+
+            _botData.QuestionCounter++;
+            if (_botData.QuestionCounter < 10)
+            {
+                output += "\n\nReady for your next question?";
+                _quizState = QuizState.QUESTION;
+            }
+            else
+            {
+                output += "\n\nThat was the last question - well done! Are you ready to see your score?";
+                _quizState = QuizState.FEEDBACK;
+            }
+            return output;
+        }
+
+
+        //==================================================//
+        // Returns a string summarising the quiz round and
+        // resets quiz fields and chatbot states
+        private string EndQuiz()
+        {
+            double roundScore = _botData.GetRoundScore();
+
+            string output = "";
+
+            if (roundScore == 100.00)
+            {
+                output += $"Amazing job {_botData.UserName}! You clearly know a lot about cybersecurity!\n";
+            }
+            else if (roundScore > 80.00)
+            {
+                output += $"Impressive work {_botData.UserName}!\n";
+            }
+            else if (roundScore > 60.00)
+            {
+                output += $"Keep at it {_botData.UserName}. Your hard work will pay off soon.\n";
+            }
+            else if (roundScore > 50.00)
+            {
+                output += $"Keep going {_botData.UserName}. You'll get 'em next time!\n";
+            }
+            else
+            {
+                output += $"Hard luck {_botData.UserName}. Keep learning and you can nail the quiz next time.\n";
+            }
+
+            output += $"You answered {roundScore}% of the questions correctly.\n\nWhat's next?";
+
+            // reset quiz fields
+            _botData.QuestionCounter = 0;
+            _botData.CorrectAnswers = 0;
+            // reset bot states
+            _quizState = QuizState.IDLE;
+            _currentChatbotState = ChatBotState.IDLE;
+            // update activity log
+            _activityLog.Add($"Quiz completed with a score of {roundScore}%.");
+            return output;
         }
 
 
         //=================================== ACTIVITY LOG METHODS ===================================//
 
+        //=======================================================//
+        // returns a formatted string containing the 10 most
+        // recently performed tasks
         private string DisplayActivityLog()
         {
             if (_activityLog.Count == 0)
@@ -706,30 +909,30 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
 
             // Default mood
-            _currentSentiment = (int)BotData.Sentiment.NEUTRAL;
+            _currentSentiment = (int) BotData.Sentiment.NEUTRAL;
             foreach (string word in question.Split(' '))
             {
                 if (word.Length > 3)
                 {
-                    if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.WORRIED]).Score >= 60)
+                    if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.WORRIED]).Score >= 60)
                     {
-                        _currentSentiment = (int)BotData.Sentiment.WORRIED;
+                        _currentSentiment = (int) BotData.Sentiment.WORRIED;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.CURIOUS]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.CURIOUS]).Score >= 60)
                     {
-                        _currentSentiment = (int)BotData.Sentiment.CURIOUS;
+                        _currentSentiment = (int) BotData.Sentiment.CURIOUS;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.HAPPY]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.HAPPY]).Score >= 60)
                     {
-                        _currentSentiment = (int)BotData.Sentiment.HAPPY;
+                        _currentSentiment = (int) BotData.Sentiment.HAPPY;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.FRUSTRATED]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.FRUSTRATED]).Score >= 60)
                     {
-                        _currentSentiment = (int)BotData.Sentiment.FRUSTRATED;
+                        _currentSentiment = (int) BotData.Sentiment.FRUSTRATED;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.CONFUSED]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.CONFUSED]).Score >= 60)
                     {
-                        _currentSentiment = (int)BotData.Sentiment.CONFUSED;
+                        _currentSentiment = (int) BotData.Sentiment.CONFUSED;
                     }
                 }
             }
@@ -740,7 +943,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         private bool GetTime(string userInput)
         {
             var timePattern = @"(\d+)\s+(year|month|week|day|hour|minute|second)s?\s+(from|after)\s+(now|today|tomorrow)";
-            var timeRegex = Regex.Match(userInput, timePattern);
+            var timeRegex = Regex.Match(PreProcess(userInput), timePattern);
             if(timeRegex.Success)
             {
                 var quantity = int.Parse(timeRegex.Groups[1].Value);
