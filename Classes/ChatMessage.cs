@@ -15,7 +15,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         private string _typingText;
         public string TypingText
         {
-            get=> _typingText;
+            get => _typingText;
             set => SetProperty(ref _typingText, value);
         }
         // End Gemini
@@ -34,7 +34,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                 {
                     await Task.Delay(word.Length * 50);
                     // with space if not first word
-                    TypingText += (TypingText.Length > 0 ? " ": "") + word;
+                    TypingText += (TypingText.Length > 0 ? " " : "") + word;
                     onTypingUpdated?.Invoke();
                 }
             }
