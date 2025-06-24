@@ -175,6 +175,27 @@ namespace ST10445832_PROG6221_PoE.Classes
             // sentiment detection
             SetSentiment(question);
 
+            // check for detail request
+            bool detailRequested = DetailRequested(question);
+
+            if (detailRequested && !string.IsNullOrEmpty(_currentTopic))
+            {
+                string detail = _botData.GetDetail(_currentTopic);
+                if (!string.IsNullOrEmpty(detail))
+                {
+                    answerLines.Add(detail);
+                    var opener = _botData.GetDetailOpener(_currentTopic);
+                    answerLines.Insert(0, opener);
+                    answerLines.Add(GetFollowUp(_currentTopic));
+                }
+                else
+                {
+                    answerLines.Add($"I'm sorry {_botData.UserName}, unfortunately I cannot provide more detail on that subject.");
+                    answerLines.Add(GetFollowUp(""));
+                }
+                return string.Join("\n", answerLines);
+            }
+
             // keyword recognition
             var keywordMatch = FuzzySharp.Process.ExtractOne(question, _botData.Keywords);
             if (keywordMatch != null && keywordMatch.Score >= 60)
@@ -197,21 +218,21 @@ namespace ST10445832_PROG6221_PoE.Classes
             // add opener to answer
             if (interestExpressed)
             {
-                answerLines.Prepend(_botData.GetInterestOpener(_userInterest));
+                answerLines.Insert(0, _botData.GetInterestOpener(_userInterest));
             }
             else if (_userInterest != null && keywordMatch != null && keywordMatch.Value == _userInterest)
             {
-                answerLines.Prepend(_botData.RecallInterest(_userInterest)[_rand.Next(0, 8)]);
+                answerLines.Insert(0, _botData.RecallInterest(_userInterest)[_rand.Next(0, 8)]);
             }
             else
             {
-                answerLines.Prepend(GetSentimentOpener());
+                answerLines.Insert(0, GetSentimentOpener());
             }
 
             // if user is following up and seems confused
             if ((_prevSentiment != _currentSentiment) && keywordMatch != null && (_currentSentiment == (int) BotData.Sentiment.CONFUSED))
             {
-                answerLines.Prepend("I understand, it can be confusing. Let me try to explain further.");
+                answerLines.Insert(0, "I understand, it can be confusing. Let me try to explain further.");
             }
 
             // add answer ending
@@ -316,6 +337,33 @@ namespace ST10445832_PROG6221_PoE.Classes
             {
                 return _botData.GetFollowUps(topic)[_rand.Next(0, _botData.FollowUps.Count())];
             }
+        }
+
+
+        //==========================================================//
+        // Returns true if a request for more detail is detected
+        private bool DetailRequested(string question)
+        {
+            List<string> detailPhrases = new List<string>
+            {
+                "more detail",
+                "explain",
+                "tell me more",
+                "clarify",
+                "elaborate",
+                "go deeper"
+            };
+
+            foreach (string phrase in detailPhrases)
+            {
+                int score = Fuzz.PartialRatio(question, phrase);
+                if (score > 75)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
 

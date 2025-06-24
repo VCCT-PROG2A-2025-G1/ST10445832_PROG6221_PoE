@@ -517,6 +517,60 @@ namespace ST10445832_PROG6221_PoE.Classes
         }
 
 
+        //==========================================================//
+        // Provides further information for certain topics
+        public string GetDetail(string topic)
+        {
+            switch(topic)
+            {
+                case "password":
+                    return new List<string>
+                    {
+                        "A password is a secret word or phrase used to authenticate access to an account or system. In cybersecurity, strong passwords help prevent unauthorized users from gaining entry to your sensitive data. A good password typically includes a mix of upper and lowercase letters, numbers, and special characters. Avoid using easily guessed words like \"123456\" or \"password.\" Many attacks rely on guessing or stealing weak passwords, so enabling two-factor authentication (2FA) can provide added security. Password managers help generate and store strong, unique passwords for different sites.",
+                        "Passwords act as the first line of defense in protecting digital identities. If a password is compromised, hackers can access personal data, emails, bank accounts, and more. Cybercriminals often use brute force attacks, where they systematically try different combinations until they guess correctly. To reduce risk, never reuse the same password across platforms. Organizations often enforce password policies—such as minimum length or regular updates—to strengthen protection.",
+                        "Your password is like the key to your digital home. It’s important that it remains secret and hard to guess. Many users struggle with creating secure passwords, but there are tools and guidelines that can help. Consider passphrases—a combination of random words like “BluePizzaDanceRocket”—which are both secure and easier to remember. Even with strong passwords, breaches can happen, so monitoring your accounts and updating passwords regularly is essential for online safety."
+                    }[_rand.Next(0, 3)];
+                case "scam":
+                    return new List<string>
+                    {
+                        "A scam is a dishonest scheme designed to trick people into giving away money, personal data, or access to systems. In cybersecurity, scams often come in digital forms such as fake emails, phone calls, or websites. Scammers might impersonate banks, tech support, or government agencies to build trust. Their goal is to manipulate you into sharing confidential information or making payments. Always verify sources and be skeptical of urgent requests or offers that seem too good to be true.",
+                        "Cyber scams exploit human psychology—curiosity, fear, urgency—to trick individuals or businesses. One common type is the tech support scam, where someone calls claiming to fix a problem with your computer, only to install malware. Another is the “romance scam,” where scammers pretend to build relationships online before asking for money. Scams are often sophisticated and evolve quickly, so staying informed and cautious is key to avoiding them.",
+                        "Online scams are a growing threat, targeting people of all ages and backgrounds. Whether through fake job offers, investment schemes, or impersonation, scammers aim to steal money or data. Many use phishing emails or deceptive ads to lure victims. If you’re asked to provide sensitive information via unsolicited messages or pressured to act quickly, it’s likely a scam. Reporting scams helps protect others and enables authorities to track these criminal activities."
+                    }[_rand.Next(0, 3)];
+                case "privacy":
+                    return new List<string>
+                    {
+                        "Privacy in cybersecurity refers to the protection of personal and sensitive information from unauthorized access. This includes data like your name, address, phone number, financial details, and online behavior. Privacy ensures individuals control how their data is collected, used, and shared. Organizations are legally and ethically responsible for safeguarding customer data, especially under laws like the GDPR or CCPA. Failing to maintain privacy can lead to identity theft, fraud, and loss of trust.",
+                        "Digital privacy means keeping your online life—emails, browsing history, location, and more—away from prying eyes. Websites, apps, and companies often track users to target them with ads or sell data. While some tracking is legal, much of it occurs without clear consent. Tools like VPNs, browser extensions, and privacy settings help limit exposure. Being aware of what data you share and with whom is crucial to maintaining digital autonomy.",
+                        "Online privacy is a cornerstone of cybersecurity. Every time you sign up for a service, post on social media, or browse the web, you generate data. If this data falls into the wrong hands—through breaches or data sales—it can be misused. That’s why it’s important to manage privacy settings, use encrypted communications, and limit sharing of personal details. Companies must also implement strong data governance policies to protect user privacy."
+                    }[_rand.Next(0, 3)];
+                case "virus":
+                    return new List<string>
+                    {
+                        "A computer virus is a type of malicious software that attaches itself to legitimate files or programs and spreads between systems. Just like a biological virus, it replicates and can cause damage, such as deleting files, stealing information, or slowing down performance. Viruses often arrive through infected email attachments, downloads, or compromised websites. Antivirus software helps detect and remove viruses, but safe user behavior—like not clicking suspicious links—is equally important.",
+                        "Viruses are among the oldest types of cyber threats. They often disguise themselves as harmless files or applications and activate when a user runs them. Once inside a system, a virus may corrupt data, disable functionality, or open backdoors for hackers. Unlike worms, viruses need human interaction to spread. Regular software updates and antivirus programs play a key role in defending against them.",
+                        "Think of a computer virus as a digital parasite. It relies on your system to survive and propagate, often without your knowledge. While some viruses are relatively harmless pranks, others can cripple systems, steal data, or act as gateways to more serious threats. Many viruses exploit outdated software, so patching systems and being cautious with email attachments and downloads is vital to avoid infection."
+                    }[_rand.Next(0, 3)];
+                case "malware":
+                    return new List<string>
+                    {
+                        "Malware is a broad term for any malicious software designed to harm or exploit systems, networks, or users. It includes viruses, worms, ransomware, spyware, and trojans. Malware can steal data, encrypt files, spy on users, or disrupt services. Cybercriminals distribute malware via infected emails, fake software updates, and compromised websites. Antivirus tools, firewalls, and safe browsing habits are essential to protect against malware.",
+                        "Short for \"malicious software,\" malware is one of the most common threats in cybersecurity. It can silently infect your device, stealing data or hijacking control without your awareness. Malware often hides in legitimate-looking software or links. Once installed, it can log keystrokes, access cameras, or lock files for ransom. Defending against malware involves a combination of updated security software, cautious behavior, and strong system configurations.",
+                        "Malware is the digital equivalent of a burglar; it breaks into your system to steal, destroy, or spy. From spyware tracking your every move to ransomware holding your files hostage, malware comes in many forms. Attackers use social engineering, software vulnerabilities, or physical access to plant malware. Regularly scanning your system and avoiding downloads from untrusted sources are effective ways to stay safe."
+                    }[_rand.Next(0, 3)];
+                case "phishing":
+                    return new List<string>
+                    {
+                        "Phishing is a cyberattack where criminals impersonate trusted sources to trick people into giving up personal information. It typically comes in the form of emails, texts, or messages that look official—like from a bank or tech company—but are actually fake. These messages often contain urgent language and malicious links. Clicking them can lead to fake login pages or malware downloads. Awareness and cautious email handling are your best defenses.",
+                        "Phishing attacks are designed to “fish” for your personal data by pretending to be someone you trust. They might ask you to reset a password, verify account details, or download an attachment. The goal is to steal login credentials, credit card numbers, or other sensitive data. Even experienced users can fall for phishing if they’re not alert. Always check the sender’s address, hover over links before clicking, and never share sensitive data via unsolicited messages.",
+                        "Phishing is one of the most successful cyberattack methods because it targets human vulnerability. Attackers create convincing messages that appear to come from real institutions, luring victims into clicking harmful links or revealing confidential data. Spear phishing takes it further by personalizing attacks to specific individuals or organizations. Training, spam filters, and multi-factor authentication help reduce phishing risk."
+                    }[_rand.Next(0, 3)];
+                default:
+                    return "";
+            }
+        }
+
+
         //=========================================================//
         // Tips for when a tip is asked for.
         // ** Tips written by Copilot **
@@ -710,6 +764,24 @@ namespace ST10445832_PROG6221_PoE.Classes
                 default:
                     return $"I see, you're interested in {interest}. That's a great field to be interested in.";
             }
+        }
+
+
+        //=========================================================//
+        // Openers for when detail is requested
+        public string GetDetailOpener(string topic)
+        {
+            topic = Pluralise(topic);
+            List<string> openers = new List<string>
+            {
+                $"Absolutely, here's more detail on {topic}",
+                "Glad you want to know more!",
+                "No problem!",
+                $"I can do that. Here's more on {topic}",
+                $"Here's more information on {topic}"
+            };
+
+            return openers[_rand.Next(0, openers.Count)];
         }
 
 
