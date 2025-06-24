@@ -12,15 +12,18 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-
+      
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-
+        
     # ChatGPT
+    - name: Clean
+      run: dotnet clean ST10445832_PROG6221_PoE.sln
+      
     - name: Install NuGet CLI
       uses: NuGet/setup-nuget@v1
     
