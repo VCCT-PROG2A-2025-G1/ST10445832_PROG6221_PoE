@@ -32,8 +32,9 @@ jobs:
       run: dotnet restore ST10445832_PROG6221_PoE.sln
       
       # ChatGPT
-    - name: Build
-      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore -p:EnableX86On64=false -p:UseHostCompilerIfAvailable=false
+    - name: Diagnostic Build
+      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore -p:EnableX86On64=false -p:UseHostCompilerIfAvailable=false /v:diag
+
       
     - name: Test
       run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal -p:EnableX86On64=false
