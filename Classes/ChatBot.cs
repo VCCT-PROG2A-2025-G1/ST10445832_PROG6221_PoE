@@ -17,12 +17,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Media;
 
 namespace ST10445832_PROG6221_PoE.Classes
 {
     public class ChatBot
     {
-        private BotData _botData;
+        public BotData _botData;
 
         private int? _currentSentiment;
         private int? _prevSentiment;
@@ -430,7 +431,8 @@ namespace ST10445832_PROG6221_PoE.Classes
                 _tempTask.OriginalInput = userInput;
                 userInput = userInput.Trim().ToLower();
                 // set task details
-                var titleSearch = Regex.Match(userInput, @"(?:remind\s+me\s+to\s+|task:|task \-|reminder:|reminder \-)(.*)");
+                var titleSearch = Regex.Match(userInput, @"(?:remind\s+me\s+to\s+|task:|task \-|reminder:|reminder \-)(.*?) (\d+) (seconds?|minutes?|hours?|days?|months?|years?)");
+
                 if (titleSearch.Success)
                 {
                     if (titleSearch.Groups.Count > 1)
@@ -493,7 +495,14 @@ namespace ST10445832_PROG6221_PoE.Classes
             // save task
             if (_createTaskState == CreateTaskState.CONFIRM)
             {
-                _tempTask.TaskNumber = _botData.Tasks.Last().TaskNumber + 1;
+                try
+                {
+                    _tempTask.TaskNumber = _botData.Tasks.Last().TaskNumber + 1;
+                }
+                catch (InvalidOperationException)
+                {
+                    _tempTask.TaskNumber = 1;
+                }
                 _botData.Tasks.Add(_tempTask);
                 _botData.UpdateTasks();
                 // return state to idle
@@ -517,6 +526,8 @@ namespace ST10445832_PROG6221_PoE.Classes
             // let the user know if there are no tasks
             if (_botData.Tasks == null || _botData.Tasks.Count == 0)
             {
+                _currentChatbotState = ChatBotState.IDLE;
+                _currentTaskState = TaskActionState.IDLE;
                 return "You have no tasks saved.\nYou can add a task by saying \"Remind me to <Task Name> <Integer> <Unit of time> from now\" (time is optional)";
             }
 
@@ -647,6 +658,8 @@ namespace ST10445832_PROG6221_PoE.Classes
             // let the user know if there are no tasks
             if (_botData.Tasks == null || _botData.Tasks.Count == 0)
             {
+                _currentChatbotState = ChatBotState.IDLE;
+                _currentTaskState = TaskActionState.IDLE;
                 return "You have no tasks saved.\nYou can add a task by saying \"Remind me to ABC XY minutes from now\" (time is optional)";
             }
 

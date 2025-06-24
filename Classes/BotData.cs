@@ -1,6 +1,7 @@
 ﻿// References
 // https://chatgpt.com
 // https://gemini.google.com
+// https://wpf-tutorial.com/misc/dispatchertimer/
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace ST10445832_PROG6221_PoE.Classes
@@ -51,6 +53,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         // path for task storage
         private string _tasksDataPath = "Tasks.xml";
         public ObservableCollection<TaskReminder> Tasks { get; set; }
+
 
         // Quiz Fields
         private List<MultipleChoiceQuestion> _multipleChoiceQuestions;

@@ -5,12 +5,15 @@
 
 
 using ST10445832_PROG6221_PoE.Classes;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace ST10445832_PROG6221_PoE
 {
@@ -19,7 +22,11 @@ namespace ST10445832_PROG6221_PoE
         private string _userName;
         private Panel _currentPanel;
         private ChatBot _secWiz;
+
         public ObservableCollection<ChatMessage> ChatMessages { get; set; }
+
+        public DispatcherTimer Timer { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -146,6 +153,7 @@ namespace ST10445832_PROG6221_PoE
                 {
                     await Task.Delay(1000);
                     ChangeViewSwipe(WelcomePanel, MenuPanel);
+                    InitialiseTimer();
                 }
             };
 
@@ -158,6 +166,43 @@ namespace ST10445832_PROG6221_PoE
         {
             Debug.WriteLine("MEDIA FAIL");
         }
+
+
+        //=================== NOTIFICATIONS ========================//
+        private void InitialiseTimer()
+        {
+            Timer = new DispatcherTimer();
+            Timer.Interval = TimeSpan.FromSeconds(1);
+            Timer.Tick += CheckNotifications;
+            Timer.Start();
+            Debug.WriteLine("timer initialised");
+        }
+
+        private void CheckNotifications(object sender, EventArgs e)
+        {
+            var notifications = _secWiz._botData.Tasks.Where(task => task.Reminder.ToString("yyyy/MM/dd HH:mm:ss").Equals(DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"))).ToList();
+
+            if (notifications.Count > 0)
+            {
+                foreach (var task in notifications)
+                {
+                    var decision = MessageBox.Show($"Task: {task.Title}\n\nWould you like to delete this task?", $"Task Number: {task.TaskNumber}", MessageBoxButton.YesNo);
+                    if (decision == MessageBoxResult.Yes)
+                    {
+                        _secWiz._botData.Tasks.Remove(task);
+                        _secWiz._botData.UpdateTasks();
+                    }
+                    else
+                    {
+                        var indexToUpdate = _secWiz._botData.Tasks.IndexOf(_secWiz._botData.Tasks.Where(t => t.TaskNumber == task.TaskNumber).First());
+                        task.Completed = true;
+                        _secWiz._botData.Tasks[indexToUpdate] = task;
+                        _secWiz._botData.UpdateTasks();
+                    }
+                }
+            }
+        }
+
     }
 }
 ////////////////////////////////////////////END OF FILE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
