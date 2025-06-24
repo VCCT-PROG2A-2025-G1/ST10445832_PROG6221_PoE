@@ -123,7 +123,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             _inputHistory.Add(userInput);
             // pre-processing
             var processedInput = PreProcess(userInput);
-           // intent recognition
+            // intent recognition
             if (Regex.Match(userInput.Trim().ToLower(), _taskPattern).Success)
             {
                 _currentChatbotState = ChatBotState.HANDLE_TASK;
@@ -132,7 +132,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             {
                 _currentChatbotState = ChatBotState.HANDLE_QUIZ;
             }
-            else if(Regex.Match(userInput.Trim().ToLower(), _activityPattern).Success)
+            else if (Regex.Match(userInput.Trim().ToLower(), _activityPattern).Success)
             {
                 _currentChatbotState = ChatBotState.ACTIVITY_LOG;
             }
@@ -230,7 +230,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
 
             // if user is following up and seems confused
-            if ((_prevSentiment != _currentSentiment) && keywordMatch != null && (_currentSentiment == (int) BotData.Sentiment.CONFUSED))
+            if ((_prevSentiment != _currentSentiment) && keywordMatch != null && (_currentSentiment == (int)BotData.Sentiment.CONFUSED))
             {
                 answerLines.Insert(0, "I understand, it can be confusing. Let me try to explain further.");
             }
@@ -238,7 +238,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             // add answer ending
             answerLines.Add(GetFollowUp((keywordMatch != null) ? keywordMatch.Value : ""));
 
-             return string.Join("\n", answerLines);
+            return string.Join("\n", answerLines);
         }
 
 
@@ -445,7 +445,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                     return "I'm on it! please enter the task title";
                 }
             }
-            
+
             if (_createTaskState == CreateTaskState.TITLE)
             {
                 _tempTask.Title = userInput;
@@ -522,7 +522,7 @@ namespace ST10445832_PROG6221_PoE.Classes
 
             // list all tasks
             string allTasks = "Certainly!\nHere are your current tasks:\n\n";
-            foreach (TaskReminder task in _botData.Tasks.Where(t=>t.Completed==false).ToList())
+            foreach (TaskReminder task in _botData.Tasks.Where(t => t.Completed == false).ToList())
             {
                 allTasks += $"Task Number: {task.TaskNumber}\nTitle: {task.Title}\nReminder: {(task.Reminder != DateTime.MinValue ? task.Reminder.ToString() : "none")}\n" +
                     $"Status: {(task.Completed ? "Completed" : "Active")}\n\n";
@@ -592,7 +592,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                     _updateTaskState = UpdateTaskState.UPDATE_REMINDER;
                     return "Let's update that reminder!\nWhen would you like to set the reminder for?\n";
                 }
-                else if(Regex.Match(PreProcess(userInput), @"\bmark\b .* \bcompleted?\b").Success)
+                else if (Regex.Match(PreProcess(userInput), @"\bmark\b .* \bcompleted?\b").Success)
                 {
                     _updateTaskState = UpdateTaskState.CONFIRM;
                     _tempTask.Completed = true;
@@ -735,24 +735,24 @@ namespace ST10445832_PROG6221_PoE.Classes
             {
                 _currentChatbotState = ChatBotState.IDLE;
                 _quizState = QuizState.IDLE;
-                _activityLog.Add($"Quiz aborted on question {_botData.QuestionCounter+1}");
+                _activityLog.Add($"Quiz aborted on question {_botData.QuestionCounter + 1}");
                 _botData.CorrectAnswers = 0;
                 _botData.QuestionCounter = 0;
                 return "Alright. I have terminated this round of the quiz.\n" + GetFollowUp("");
             }
             switch (_quizState)
-                {
-                    case QuizState.IDLE:
-                        return QuizIntro();
-                    case QuizState.QUESTION:
-                        return AskQuestion();
-                    case QuizState.ANSWER:
-                        return CheckAnswer(userInput);
-                    case QuizState.FEEDBACK:
-                        return EndQuiz();
-                    default:
-                        return "No task action recognised.";
-                }
+            {
+                case QuizState.IDLE:
+                    return QuizIntro();
+                case QuizState.QUESTION:
+                    return AskQuestion();
+                case QuizState.ANSWER:
+                    return CheckAnswer(userInput);
+                case QuizState.FEEDBACK:
+                    return EndQuiz();
+                default:
+                    return "No task action recognised.";
+            }
         }
 
 
@@ -780,7 +780,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             string output = "";
             if (question.GetType() == typeof(MultipleChoiceQuestion))
             {
-                var q = (MultipleChoiceQuestion) question;
+                var q = (MultipleChoiceQuestion)question;
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"Question: {q.Question}");
                 sb.AppendLine($"A) {q.Choices[0]}");
@@ -791,7 +791,7 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
             else
             {
-                var q = (BoolQuestion) question;
+                var q = (BoolQuestion)question;
                 output = $"True or False: {q.Question}";
             }
             _quizState = QuizState.ANSWER;
@@ -921,8 +921,8 @@ namespace ST10445832_PROG6221_PoE.Classes
             var pos = 1;
             // reverse the activity log
             _activityLog.Reverse();
-            foreach(var log in _activityLog.Take(10))
-            {                
+            foreach (var log in _activityLog.Take(10))
+            {
                 response += string.Format("{0, -2}. {1}\n", pos, log);
                 pos++;
             }
@@ -957,30 +957,30 @@ namespace ST10445832_PROG6221_PoE.Classes
             }
 
             // Default mood
-            _currentSentiment = (int) BotData.Sentiment.NEUTRAL;
+            _currentSentiment = (int)BotData.Sentiment.NEUTRAL;
             foreach (string word in question.Split(' '))
             {
                 if (word.Length > 3)
                 {
-                    if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.WORRIED]).Score >= 60)
+                    if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.WORRIED]).Score >= 60)
                     {
-                        _currentSentiment = (int) BotData.Sentiment.WORRIED;
+                        _currentSentiment = (int)BotData.Sentiment.WORRIED;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.CURIOUS]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.CURIOUS]).Score >= 60)
                     {
-                        _currentSentiment = (int) BotData.Sentiment.CURIOUS;
+                        _currentSentiment = (int)BotData.Sentiment.CURIOUS;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.HAPPY]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.HAPPY]).Score >= 60)
                     {
-                        _currentSentiment = (int) BotData.Sentiment.HAPPY;
+                        _currentSentiment = (int)BotData.Sentiment.HAPPY;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.FRUSTRATED]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.FRUSTRATED]).Score >= 60)
                     {
-                        _currentSentiment = (int) BotData.Sentiment.FRUSTRATED;
+                        _currentSentiment = (int)BotData.Sentiment.FRUSTRATED;
                     }
-                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int) BotData.Sentiment.CONFUSED]).Score >= 60)
+                    else if (FuzzySharp.Process.ExtractOne(word, _botData.SentimentWords[(int)BotData.Sentiment.CONFUSED]).Score >= 60)
                     {
-                        _currentSentiment = (int) BotData.Sentiment.CONFUSED;
+                        _currentSentiment = (int)BotData.Sentiment.CONFUSED;
                     }
                 }
             }
@@ -992,7 +992,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         {
             var timePattern = @"(\d+)\s+(year|month|week|day|hour|minute|second)s?\s+(from|after)\s+(now|today|tomorrow)";
             var timeRegex = Regex.Match(PreProcess(userInput), timePattern);
-            if(timeRegex.Success)
+            if (timeRegex.Success)
             {
                 var quantity = int.Parse(timeRegex.Groups[1].Value);
                 var unit = timeRegex.Groups[2].Value;
@@ -1040,7 +1040,7 @@ namespace ST10445832_PROG6221_PoE.Classes
                     return start.AddMonths(qty);
                 case "year":
                     return start.AddYears(qty);
-                    default: return start.AddHours(1);
+                default: return start.AddHours(1);
             }
         }
 

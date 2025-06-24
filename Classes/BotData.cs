@@ -521,7 +521,7 @@ namespace ST10445832_PROG6221_PoE.Classes
         // Provides further information for certain topics
         public string GetDetail(string topic)
         {
-            switch(topic)
+            switch (topic)
             {
                 case "password":
                     return new List<string>
@@ -1031,10 +1031,10 @@ namespace ST10445832_PROG6221_PoE.Classes
         {
             // get 5 random questions of each type
             var multipleChoice = _multipleChoiceQuestions.OrderBy(q => _rand.Next()).Take(5);
-            var trueFalse = _boolQuestions.OrderBy(q =>  _rand.Next()).Take(5);
+            var trueFalse = _boolQuestions.OrderBy(q => _rand.Next()).Take(5);
             var roundQuestions = new List<object>();
 
-            foreach(var q in multipleChoice)
+            foreach (var q in multipleChoice)
             {
                 roundQuestions.Add(q);
             }

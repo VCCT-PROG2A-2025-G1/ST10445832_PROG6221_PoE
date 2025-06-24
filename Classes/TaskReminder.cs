@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 namespace ST10445832_PROG6221_PoE.Classes
 {
 
-    [XmlRoot("Tasks", Namespace="")]
+    [XmlRoot("Tasks", Namespace = "")]
     public class TasksStore
     {
         [XmlElement("Task")]

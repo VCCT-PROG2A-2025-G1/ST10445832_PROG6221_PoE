@@ -66,7 +66,7 @@ namespace ST10445832_PROG6221_PoE
             MenuPanel.Visibility = Visibility.Collapsed;
             ChatPanel.Visibility = Visibility.Visible;
             _currentPanel = ChatPanel;
-            
+
             if (ChatMessages.Count > 0)
             {
                 ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = $"{_secWiz.Greeting()}" });
@@ -126,9 +126,9 @@ namespace ST10445832_PROG6221_PoE
                 ChatMessages.Add(new ChatMessage() { Author = "SecWiz", Text = "You must type something for me to be able to answer." });
                 await ChatMessages[ChatMessages.Count - 1].TypeMessage(() => { ChatScrollViewer.ScrollToEnd(); });
             }
-            
+
             ChatInputBox.IsEnabled = true;
-            SendMessageBtn.IsEnabled = true ;
+            SendMessageBtn.IsEnabled = true;
         }
 
         private void ChangeViewSwipe(Panel current, Panel next)
