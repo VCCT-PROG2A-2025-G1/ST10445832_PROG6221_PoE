@@ -27,18 +27,14 @@ jobs:
     - name: Install NuGet CLI
       uses: NuGet/setup-nuget@v1
     
-    - name: Restore Nuget Packages
+    - name: Restore NuGet packages
       run: nuget restore ST10445832_PROG6221_PoE.sln
-    # End ChatGPT
-    
-    - name: Restore dependencies
-      run: dotnet restore ST10445832_PROG6221_PoE.sln
-      
-      # ChatGPT
+
     - name: Build with MSBuild
+      shell: cmd
       run: |
         "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
-      
+
     - name: Test
       run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal -p:EnableX86On64=false
       
