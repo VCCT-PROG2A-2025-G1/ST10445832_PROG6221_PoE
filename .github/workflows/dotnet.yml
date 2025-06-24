@@ -2,13 +2,9 @@ name: Build and Format Check (.NET Framework 4.8)
 
 on:
   push:
-    branches:
-      - main # Trigger on pushes to the main branch
-      - develop # And also to the develop branch (adjust as needed)
+    branches: [ "master" ]
   pull_request:
-    branches:
-      - main # Trigger on pull requests targeting main
-      - develop # And also targeting develop (adjust as needed)
+    branches: [ "master" ]
   workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
