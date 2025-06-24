@@ -35,9 +35,9 @@ jobs:
       run: dotnet restore ST10445832_PROG6221_PoE.sln
       
       # ChatGPT
-    - name: Diagnostic Build
-      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore -p:EnableX86On64=false -p:UseHostCompilerIfAvailable=false /v:diag
-
+    - name: Build with MSBuild
+      run: |
+        "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
       
     - name: Test
       run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal -p:EnableX86On64=false
