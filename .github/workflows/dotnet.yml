@@ -1,39 +1,50 @@
-name: .NET
+name: Build and Format Check (.NET Framework 4.8)
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main # Trigger on pushes to the main branch
+      - develop # And also to the develop branch (adjust as needed)
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - main # Trigger on pull requests targeting main
+      - develop # And also targeting develop (adjust as needed)
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
-  build:
-    runs-on: windows-latest
+  build-and-format:
+    runs-on: windows-latest # .NET Framework 4.8 requires a Windows runner
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4 # Action to check out your repository
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.x' # <--- CRITICAL: Set this to your exact .NET version, e.g., '6.0.x', '7.0.x', '8.0.x'
-                              # Using a specific patch version like '8.0.1' might be safer than '8.x' if issues persist.
-
-    - name: Verify dotnet CLI is on PATH
-      run: |
-        echo "PATH: %PATH%"
-        dotnet --version
-        where msbuild # On Windows, 'where' is like 'which' on Linux/macOS
+    - name: Setup MSBuild and NuGet
+      # Uses the 'setup-msbuild' action to prepare the environment for MSBuild and NuGet.
+      # This ensures the necessary tools are available on the Windows runner.
+      uses: microsoft/setup-msbuild@v2
 
     - name: Restore NuGet packages
-      # For SDK-style projects, 'dotnet restore' is generally preferred and often implicitly run by 'dotnet build'.
-      # If your project uses packages.config, 'nuget restore' is correct.
+      # Restores all NuGet packages required by the solution.
+      # The '-NoCache' flag prevents caching issues in CI environments.
       run: nuget restore ST10445832_PROG6221_PoE.sln
 
-    - name: Build with MSBuild
-      # For SDK-style projects, consider using 'dotnet build' as it wraps MSBuild and handles the SDK setup better.
-      # If your project is not SDK-style, keep msbuild directly.
-      run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
+    - name: Build application
+      # Builds the WPF application using MSBuild.
+      # The /p:Configuration=Release sets the build configuration to Release.
+      # The /p:Platform="Any CPU" sets the target platform.
+      # Adjust these parameters if your project uses different configurations/platforms.
+      run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
-    - name: Check Formatting
-      run: dotnet format ST10445832_PROG6221_PoE.sln --verify-no-changes --severity error
+    - name: Setup .NET SDK for dotnet format
+      # While the app is .NET Framework, 'dotnet format' is a .NET Core/.NET SDK tool.
+      # This step installs a recent .NET SDK to use 'dotnet format'.
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x' # Use a recent .NET SDK version
+
+    - name: Check code format
+      # Runs 'dotnet format' in check-only mode.
+      # The '--verify-no-changes' flag ensures the step fails if any formatting issues are found.
+      # This prevents unformatted code from being merged.
+      run: dotnet format ST10445832_PROG6221_PoE.sln --check --verify-no-changes
