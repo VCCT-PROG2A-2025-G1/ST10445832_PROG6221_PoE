@@ -1,4 +1,4 @@
-name: Build and Format Check (.NET Framework 4.8)
+name: Build and Validate Code Formatting
 
 on:
   push:
