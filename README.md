@@ -4,9 +4,12 @@
 ### Requirements
 - Microsoft Visual Studio
 - Nuget Package: FuzzySharp 2.0.2 by Jacob Bayer
-  - Open ST10445832_PROG6221_Part1.sln in Visual Studio
+  - Open ST10445832_PROG6221_PoE.sln in Visual Studio
   - Tools -> NuGet Package Manager -> Manage NuGet Packages for solution
   - Browse and install FuzzSharp if not under 'installed' tab
+- Nuget Package: CommunityToolkit.Mvvm by Microsoft
+- Nuget Package: MaterialDesignColors by James Willock
+- Nuget Package: MaterialDesignThemes by James Willock
 
 ## SecWiz Usage
 __IMPORTANT__: reducing the console window width will mess up the UI, though the application functionality will remain.

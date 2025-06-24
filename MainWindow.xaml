@@ -1,0 +1,196 @@
+﻿<!-- References -->
+<!-- https://chatgpt.com -->
+<!-- https://gemini.google.com -->
+<!-- https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Icons -->
+<!-- https://learn.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/how-to-control-a-mediaelement-play-pause-stop-volume-and-speed -->
+<!-- https://wpf-tutorial.com/panels/grid-column-row-span/ -->
+<!-- https://www.c-sharpcorner.com/uploadfile/mahesh/listbox-in-wpf/ -->
+    
+<Window x:Class="ST10445832_PROG6221_PoE.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ST10445832_PROG6221_PoE"
+        xmlns:classes="clr-namespace:ST10445832_PROG6221_PoE.Classes"
+        xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="SecWiz" Height="450" Width="800" WindowStartupLocation="CenterScreen"
+        Loaded="Title_Start">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type classes:ChatMessage}">
+            <StackPanel>
+                <TextBlock Text="{Binding Author}" FontWeight="Bold" />
+                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel x:Name="BootPanel">
+
+            <Image x:Name="BootImage"
+           Source="/Assets/SecWiz_ASCII.png"
+           Height="430" VerticalAlignment="Bottom">
+                <Image.RenderTransform>
+                    <TranslateTransform Y="0" X="0" />
+                </Image.RenderTransform>
+            </Image>
+
+            <MediaElement x:Name="WelcomeGreeting" Source="SecWizTelephone.wav" LoadedBehavior="Play" MediaFailed="WelcomeGreeting_MediaFailed"  MediaEnded="BootPanel_Ended" />
+        </StackPanel>
+
+        
+        <Grid x:Name="IntroPanel">
+            <Label Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            
+            <StackPanel VerticalAlignment="Center" Width="200">
+                <Label Content="Please enter your name" HorizontalAlignment="Left" />
+                <TextBox x:Name="UserNameInput" Style="{StaticResource MaterialDesignTextBox}"
+                         Margin="4 6 0 16"
+                         Text="" />
+
+                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                        Content="Continue" Click="UserNameContinue_Click" />
+
+            </StackPanel>
+            
+            <Grid.RenderTransform>
+                <TranslateTransform X="0" />
+            </Grid.RenderTransform>
+        </Grid>
+
+        
+        <Grid x:Name="WelcomePanel">
+            <Label Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Label x:Name="UserWelcomeLabel" Content="Welcome demo string!"
+                   FontSize="16" FontWeight="DemiBold"
+                   VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Grid.RenderTransform>
+                <TranslateTransform X="0" />
+            </Grid.RenderTransform>
+        </Grid>
+
+
+        <Grid x:Name="MenuPanel">
+            <Label Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            
+            <StackPanel VerticalAlignment="Center" Width="200">
+                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                        Margin="0 0 0 16"
+                        Content="Chat" Click="Chat_Click" />
+
+                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                        Margin="0 0 0 16"
+                        Content="Help" Click="Help_Click" />
+
+                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                        Margin="0 0 0 16"
+                        Content="Exit" Click="Exit_Click" />
+            </StackPanel>
+            
+            <Grid.RenderTransform>
+                <TranslateTransform X="0" />
+            </Grid.RenderTransform>
+        </Grid>
+
+
+        <Grid x:Name="ChatPanel">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="54" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0" Content="Back" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8 0" Click="Back_Click" />
+            <Label Grid.Row="0" Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <DockPanel Grid.Row="1" LastChildFill="True">
+                <Grid DockPanel.Dock="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="48" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="ChatInputBox" Grid.Column="0"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="8 4 8 8"
+                             Height="48"/>
+
+                    <Button x:Name="SendMessageBtn"
+                            Style="{StaticResource MaterialDesignFlatSecondaryDarkButton}"
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="0 4 8 8"
+                            Padding="0"
+                            Height="50"
+                            Width="48"
+                            Content="{materialdesign:PackIcon Kind=SendVariant, Size=36}"
+                            Click="SendMessage_Click">
+                    </Button>
+
+                </Grid>
+
+                <ScrollViewer x:Name="ChatScrollViewer">
+                    <ListView ItemsSource="{Binding ChatMessages}"
+                              ItemTemplate="{DynamicResource ChatMessageTemplate}" />
+                </ScrollViewer>
+
+            </DockPanel>
+        </Grid>
+
+        <Grid x:Name="HelpPanel">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="54" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <Button Grid.Row="0" Content="Back" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8 0" Click="Back_Click" />
+            <Label Grid.Row="0" Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Grid.Row="1">
+                    <GroupBox Padding="16" Header="Question Answering">
+                        <StackPanel>
+                            <TextBlock Text="SecWiz can answer your free-text cyber security questions." />
+                            <TextBlock Text="• 'What is a VPN?'" />
+                            <TextBlock Text="• 'Please give me a password tip.'" />
+                            <TextBlock Text="• 'How do I make a strong password?'" />
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Padding="16" Header="Tasks and Reminders">
+                        <StackPanel>
+                            <TextBlock Text="SecWiz can save tasks and set reminders for you." />
+                            <TextBlock Text="• 'Add Task: Update Google password.'" />
+                            <TextBlock Text="• 'Remind me to update my Google password 2 days from now.'" />
+                            <TextBlock Text="• 'New task - update my google password 25 minutes from now.'" />
+                            <TextBlock Text="You can see what tasks you have saved." />
+                            <TextBlock Text="• 'List tasks'" />
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Padding="16" Header="Quiz Mini-game">
+                        <StackPanel>
+                            <TextBlock Text="You can test your cybersecurity knowledge by playing the SecWiz Quiz." />
+                            <TextBlock Text="• 'Play Quiz'" />
+                            <TextBlock Text="• 'Start Mini-Game'" />
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Padding="16" Header="More Commands">
+                        <StackPanel>
+                            <TextBlock Text="Activity Log" />
+                            <TextBlock Text="• 'Show me recent activities.'" />
+                            <TextBlock Text="You can end the quiz or cancel a task process by entering: 'cancel'." />
+                        </StackPanel>
+                    </GroupBox>
+            
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+    </Grid>
+
+</Window>

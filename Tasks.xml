@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tasks xmlns="">
+	<Task>
+		<TaskNumber></TaskNumber>
+		<Title></Title>
+		<Description></Description>
+		<Reminder></Reminder>
+		<Created></Created>
+	</Task>
+</Tasks>
+
+

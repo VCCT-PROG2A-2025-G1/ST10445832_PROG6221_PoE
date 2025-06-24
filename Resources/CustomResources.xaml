@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:classes="clr-namespace:ST10445832_PROG6221_PoE.Classes">
+
+    <Style x:Key="SwBtn" TargetType="Button">
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderThickness" Value="0.5" />
+        <Setter Property="Background" Value="GreenYellow" />
+    </Style>
+
+    <DataTemplate x:Key="ChatMessageTemplate" DataType="{x:Type classes:ChatMessage}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{Binding Author}" Grid.Row="0" FontWeight="Bold"/>
+            <TextBlock Text="{Binding TypingText}" Grid.Row="1" TextWrapping="Wrap" MaxWidth="750"/>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

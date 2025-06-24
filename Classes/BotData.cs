@@ -1,11 +1,18 @@
 ﻿// References
 // https://chatgpt.com
+// https://gemini.google.com
 
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
 
 namespace ST10445832_PROG6221_PoE.Classes
 {
-    internal class Data
+    public class BotData
     {
         // all questions and answers
         public Dictionary<string, string> QnA = new Dictionary<string, string>();
@@ -19,6 +26,15 @@ namespace ST10445832_PROG6221_PoE.Classes
         public List<List<string>> Openers = new List<List<string>>();
         // words used to gague sentiment
         public List<string> SentimentWords = new List<string>();
+        // outputs for first interaction on entering chat
+        public List<string> FirstMessageEndings = new List<string>()
+        {
+            "What will it be this time?",
+            "How can I help?",
+            "What would you like to know?",
+            "What do you want to know about?",
+            "What would you like to ask me?"
+        };
 
         public string UserName;
 
@@ -32,11 +48,22 @@ namespace ST10445832_PROG6221_PoE.Classes
             CONFUSED = 4,
             NEUTRAL = 5
         };
+        // path for task storage
+        private string _tasksDataPath = "Tasks.xml";
+        public ObservableCollection<TaskReminder> Tasks { get; set; }
 
+        // Quiz Fields
+        private List<MultipleChoiceQuestion> _multipleChoiceQuestions;
+        private List<BoolQuestion> _boolQuestions;
+        public int QuestionCounter = 0;
+        public int CorrectAnswers = 0;
+        public List<Object> RoundQuestions;
+
+        private Random _rand = new Random();
 
         //=========================================================//
         // Default constructor
-        public Data(string userName)
+        public BotData(string userName)
         {
             UserName = userName;
             InitialiseQnA();
@@ -44,6 +71,70 @@ namespace ST10445832_PROG6221_PoE.Classes
             InitialiseOpeners();
             InitialiseFollowUps();
             InitialiseSentimentWords();
+            InitialiseQuizQuestions();
+            Tasks = new ObservableCollection<TaskReminder>();
+            LoadTasks();
+        }
+
+
+        //=========================================================//
+        // Loads tasks from xml file
+        private void LoadTasks()
+        {
+            if (File.Exists(_tasksDataPath))
+            {
+                try
+                {
+                    // Gemini
+                    XmlRootAttribute rootAttribute = new XmlRootAttribute("Tasks");
+                    rootAttribute.Namespace = "";
+                    XmlSerializer xmlSerial = new XmlSerializer(typeof(TasksStore), rootAttribute);
+                    using (FileStream fs = new FileStream(_tasksDataPath, FileMode.Open))
+                    {
+                        var tasksStore = (TasksStore)xmlSerial.Deserialize(fs);
+                        if (tasksStore != null && tasksStore.Tasks.Count > 0)
+                        {
+                            foreach (var task in tasksStore.Tasks)
+                            {
+                                Tasks.Add(task);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Tasks file not found");
+            }
+        }
+
+        //===============================================//
+        // saves items from Tasks list an xml file
+        public void UpdateTasks()
+        {
+            TasksStore newTasksStore = new TasksStore();
+            foreach (var task in Tasks)
+            {
+                newTasksStore.Tasks.Add(task);
+            }
+            try
+            {
+                XmlRootAttribute rootAttribute = new XmlRootAttribute("Tasks");
+                rootAttribute.Namespace = "";
+                XmlSerializer xmlSerial = new XmlSerializer(typeof(TasksStore), rootAttribute);
+                using (FileStream fs = new FileStream(_tasksDataPath, FileMode.Create))
+                {
+                    xmlSerial.Serialize(fs, newTasksStore);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
 
@@ -413,16 +504,70 @@ namespace ST10445832_PROG6221_PoE.Classes
             //END CHATGPT
 
             // EXIT (return to main menu)
-            QnA.Add("No more questions", "Thanks for chatting!");
-            QnA.Add("No thanks", "Thanks for chatting!");
-            QnA.Add("No", "Thanks for chatting!");
-            QnA.Add("Goodbye", "Thanks for chatting!");
-            QnA.Add("Good bye", "Thanks for chatting!");
-            QnA.Add("Bye", "Thanks for chatting!");
-            QnA.Add("Back", "Thanks for chatting!");
-            QnA.Add("Exit", "Thanks for chatting!");
-            QnA.Add("Quit", "Thanks for chatting!");
-            QnA.Add("Main menu", "Thanks for chatting!");
+            //QnA.Add("No more questions", "Thanks for chatting!");
+            //QnA.Add("No thanks", "Thanks for chatting!");
+            //QnA.Add("No", "Thanks for chatting!");
+            //QnA.Add("Goodbye", "Thanks for chatting!");
+            //QnA.Add("Good bye", "Thanks for chatting!");
+            //QnA.Add("Bye", "Thanks for chatting!");
+            //QnA.Add("Back", "Thanks for chatting!");
+            //QnA.Add("Exit", "Thanks for chatting!");
+            //QnA.Add("Quit", "Thanks for chatting!");
+            //QnA.Add("Main menu", "Thanks for chatting!");
+        }
+
+
+        //==========================================================//
+        // Provides further information for certain topics
+        public string GetDetail(string topic)
+        {
+            switch(topic)
+            {
+                case "password":
+                    return new List<string>
+                    {
+                        "A password is a secret word or phrase used to authenticate access to an account or system. In cybersecurity, strong passwords help prevent unauthorized users from gaining entry to your sensitive data. A good password typically includes a mix of upper and lowercase letters, numbers, and special characters. Avoid using easily guessed words like \"123456\" or \"password.\" Many attacks rely on guessing or stealing weak passwords, so enabling two-factor authentication (2FA) can provide added security. Password managers help generate and store strong, unique passwords for different sites.",
+                        "Passwords act as the first line of defense in protecting digital identities. If a password is compromised, hackers can access personal data, emails, bank accounts, and more. Cybercriminals often use brute force attacks, where they systematically try different combinations until they guess correctly. To reduce risk, never reuse the same password across platforms. Organizations often enforce password policies—such as minimum length or regular updates—to strengthen protection.",
+                        "Your password is like the key to your digital home. It’s important that it remains secret and hard to guess. Many users struggle with creating secure passwords, but there are tools and guidelines that can help. Consider passphrases—a combination of random words like “BluePizzaDanceRocket”—which are both secure and easier to remember. Even with strong passwords, breaches can happen, so monitoring your accounts and updating passwords regularly is essential for online safety."
+                    }[_rand.Next(0, 3)];
+                case "scam":
+                    return new List<string>
+                    {
+                        "A scam is a dishonest scheme designed to trick people into giving away money, personal data, or access to systems. In cybersecurity, scams often come in digital forms such as fake emails, phone calls, or websites. Scammers might impersonate banks, tech support, or government agencies to build trust. Their goal is to manipulate you into sharing confidential information or making payments. Always verify sources and be skeptical of urgent requests or offers that seem too good to be true.",
+                        "Cyber scams exploit human psychology—curiosity, fear, urgency—to trick individuals or businesses. One common type is the tech support scam, where someone calls claiming to fix a problem with your computer, only to install malware. Another is the “romance scam,” where scammers pretend to build relationships online before asking for money. Scams are often sophisticated and evolve quickly, so staying informed and cautious is key to avoiding them.",
+                        "Online scams are a growing threat, targeting people of all ages and backgrounds. Whether through fake job offers, investment schemes, or impersonation, scammers aim to steal money or data. Many use phishing emails or deceptive ads to lure victims. If you’re asked to provide sensitive information via unsolicited messages or pressured to act quickly, it’s likely a scam. Reporting scams helps protect others and enables authorities to track these criminal activities."
+                    }[_rand.Next(0, 3)];
+                case "privacy":
+                    return new List<string>
+                    {
+                        "Privacy in cybersecurity refers to the protection of personal and sensitive information from unauthorized access. This includes data like your name, address, phone number, financial details, and online behavior. Privacy ensures individuals control how their data is collected, used, and shared. Organizations are legally and ethically responsible for safeguarding customer data, especially under laws like the GDPR or CCPA. Failing to maintain privacy can lead to identity theft, fraud, and loss of trust.",
+                        "Digital privacy means keeping your online life—emails, browsing history, location, and more—away from prying eyes. Websites, apps, and companies often track users to target them with ads or sell data. While some tracking is legal, much of it occurs without clear consent. Tools like VPNs, browser extensions, and privacy settings help limit exposure. Being aware of what data you share and with whom is crucial to maintaining digital autonomy.",
+                        "Online privacy is a cornerstone of cybersecurity. Every time you sign up for a service, post on social media, or browse the web, you generate data. If this data falls into the wrong hands—through breaches or data sales—it can be misused. That’s why it’s important to manage privacy settings, use encrypted communications, and limit sharing of personal details. Companies must also implement strong data governance policies to protect user privacy."
+                    }[_rand.Next(0, 3)];
+                case "virus":
+                    return new List<string>
+                    {
+                        "A computer virus is a type of malicious software that attaches itself to legitimate files or programs and spreads between systems. Just like a biological virus, it replicates and can cause damage, such as deleting files, stealing information, or slowing down performance. Viruses often arrive through infected email attachments, downloads, or compromised websites. Antivirus software helps detect and remove viruses, but safe user behavior—like not clicking suspicious links—is equally important.",
+                        "Viruses are among the oldest types of cyber threats. They often disguise themselves as harmless files or applications and activate when a user runs them. Once inside a system, a virus may corrupt data, disable functionality, or open backdoors for hackers. Unlike worms, viruses need human interaction to spread. Regular software updates and antivirus programs play a key role in defending against them.",
+                        "Think of a computer virus as a digital parasite. It relies on your system to survive and propagate, often without your knowledge. While some viruses are relatively harmless pranks, others can cripple systems, steal data, or act as gateways to more serious threats. Many viruses exploit outdated software, so patching systems and being cautious with email attachments and downloads is vital to avoid infection."
+                    }[_rand.Next(0, 3)];
+                case "malware":
+                    return new List<string>
+                    {
+                        "Malware is a broad term for any malicious software designed to harm or exploit systems, networks, or users. It includes viruses, worms, ransomware, spyware, and trojans. Malware can steal data, encrypt files, spy on users, or disrupt services. Cybercriminals distribute malware via infected emails, fake software updates, and compromised websites. Antivirus tools, firewalls, and safe browsing habits are essential to protect against malware.",
+                        "Short for \"malicious software,\" malware is one of the most common threats in cybersecurity. It can silently infect your device, stealing data or hijacking control without your awareness. Malware often hides in legitimate-looking software or links. Once installed, it can log keystrokes, access cameras, or lock files for ransom. Defending against malware involves a combination of updated security software, cautious behavior, and strong system configurations.",
+                        "Malware is the digital equivalent of a burglar; it breaks into your system to steal, destroy, or spy. From spyware tracking your every move to ransomware holding your files hostage, malware comes in many forms. Attackers use social engineering, software vulnerabilities, or physical access to plant malware. Regularly scanning your system and avoiding downloads from untrusted sources are effective ways to stay safe."
+                    }[_rand.Next(0, 3)];
+                case "phishing":
+                    return new List<string>
+                    {
+                        "Phishing is a cyberattack where criminals impersonate trusted sources to trick people into giving up personal information. It typically comes in the form of emails, texts, or messages that look official—like from a bank or tech company—but are actually fake. These messages often contain urgent language and malicious links. Clicking them can lead to fake login pages or malware downloads. Awareness and cautious email handling are your best defenses.",
+                        "Phishing attacks are designed to “fish” for your personal data by pretending to be someone you trust. They might ask you to reset a password, verify account details, or download an attachment. The goal is to steal login credentials, credit card numbers, or other sensitive data. Even experienced users can fall for phishing if they’re not alert. Always check the sender’s address, hover over links before clicking, and never share sensitive data via unsolicited messages.",
+                        "Phishing is one of the most successful cyberattack methods because it targets human vulnerability. Attackers create convincing messages that appear to come from real institutions, luring victims into clicking harmful links or revealing confidential data. Spear phishing takes it further by personalizing attacks to specific individuals or organizations. Training, spam filters, and multi-factor authentication help reduce phishing risk."
+                    }[_rand.Next(0, 3)];
+                default:
+                    return "";
+            }
         }
 
 
@@ -623,6 +768,24 @@ namespace ST10445832_PROG6221_PoE.Classes
 
 
         //=========================================================//
+        // Openers for when detail is requested
+        public string GetDetailOpener(string topic)
+        {
+            topic = Pluralise(topic);
+            List<string> openers = new List<string>
+            {
+                $"Absolutely, here's more detail on {topic}",
+                "Glad you want to know more!",
+                "No problem!",
+                $"I can do that. Here's more on {topic}",
+                $"Here's more information on {topic}"
+            };
+
+            return openers[_rand.Next(0, openers.Count)];
+        }
+
+
+        //=========================================================//
         // Recall reponses for when a user interest appear later
         public List<string> RecallInterest(string interest)
         {
@@ -685,6 +848,211 @@ namespace ST10445832_PROG6221_PoE.Classes
                     break;
             }
             return topic;
+        }
+
+
+        //========================================================//
+        // Populates the quiz questions list
+        private void InitialiseQuizQuestions()
+        {
+            _multipleChoiceQuestions = new List<MultipleChoiceQuestion>
+            {
+                new MultipleChoiceQuestion
+                {
+                    Question = "What does the acronym 'VPN' stand for?",
+                    Choices = new List<string> { "Virtual Private Network", "Virtual Protected Network", "Verified Private Network", "Variable Proxy Node" },
+                    Answer = "A",
+                    Explanation = "A VPN encrypts your internet traffic and routes it through a secure server to protect your identity and data."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "Which of the following is considered a strong password?",
+                    Choices = new List<string> { "12345678", "password", "P@ssw0rd#2024", "qwerty" },
+                    Answer = "C",
+                    Explanation = "Strong passwords use a mix of upper/lowercase letters, numbers, and special characters to increase complexity."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What type of attack involves tricking users into giving up personal information?",
+                    Choices = new List < string > { "Phishing", "DDoS", "Brute force", "Spoofing" },
+                    Answer = "A",
+                    Explanation = "Phishing deceives users with fake emails or sites to steal credentials or financial data."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is the purpose of a firewall?",
+                    Choices = new List < string > { "Encrypt data", "Prevent unauthorized access", "Back up data", "Monitor employee activity" },
+                    Answer = "B",
+                    Explanation = "Firewalls monitor and control network traffic, allowing or blocking traffic based on security rules."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "Which is a form of malware that locks you out of your files and demands payment?",
+                    Choices = new List < string >    { "Spyware", "Ransomware", "Trojan", "Adware" },
+                    Answer = "B",
+                    Explanation = "Ransomware encrypts your files and demands payment (usually in cryptocurrency) to restore access."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What does HTTPS indicate in a website URL?",
+                    Choices = new List < string > { "The site is hosted on a cloud server", "The site is secure", "The site is fast", "The site is blocked" },
+                    Answer = "B",
+                    Explanation = "HTTPS uses SSL/TLS encryption, ensuring that data between your browser and the website is protected."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "Which one is NOT a type of multi-factor authentication?",
+                    Choices = new List < string > { "Password", "Security token", "Fingerprint", "Firewall" },
+                    Answer = "D",
+                    Explanation = "Firewalls are network security tools, not a method of identity verification like MFA."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is social engineering in cybersecurity?",
+                    Choices = new List < string > { "Hardware manipulation", "Manipulating people to gain access", "Network routing", "Using software exploits" },
+                    Answer = "B",
+                    Explanation = "Social engineering relies on human error or trust rather than technical exploits to gain unauthorized access."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is a zero-day vulnerability?",
+                    Choices = new List < string > { "A fully patched system", "A known bug", "An unknown and unpatched flaw", "A software update" },
+                    Answer = "C",
+                    Explanation = "Zero-days are security holes that are unknown to vendors and exploited before they’re patched."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is a brute-force attack?",
+                    Choices = new List < string > { "Trying many passwords until one works", "Destroying hardware", "Flooding a network", "Hijacking a browser" },
+                    Answer = "A",
+                    Explanation = "It involves systematically guessing passwords until the correct one is found."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What does 'DDoS' stand for?",
+                    Choices = new List < string > { "Distributed Denial of Service", "Data Distribution over Systems", "Direct Data over Servers", "Dynamic Defense of Security" },
+                    Answer = "A",
+                    Explanation = "A DDoS attack overwhelms a system with traffic from multiple sources to make it unavailable."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is the main role of an antivirus program?",
+                    Choices = new List < string > { "Back up data", "Prevent hacking", "Detect and remove malware", "Encrypt files" },
+                    Answer = "C",
+                    Explanation = "Antivirus software scans systems for malicious files and helps remove them."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is two-factor authentication?",
+                    Choices = new List < string > { "Logging in from two devices", "Using two passwords", "Using two different types of credentials", "Scanning your computer twice" },
+                    Answer = "C",
+                    Explanation = "2FA requires something you know (password) and something you have (token) or are (biometric)."
+                },
+                new MultipleChoiceQuestion
+                {
+                    Question = "What is a common sign of a phishing email?",
+                    Choices = new List < string > { "A personal message from a friend", "Generic greetings and urgent language", "Correct grammar and spelling", "From a known business" },
+                    Answer = "B",
+                    Explanation = "Phishing emails often use vague salutations and scare tactics to trick recipients into clicking links."
+                }
+            };
+
+            _boolQuestions = new List<BoolQuestion>
+            {
+                new BoolQuestion
+                {
+                    Question = "Using 'password' as your password is secure.",
+                    Answer = false,
+                    Explanation = "'password' is one of the most common and weakest passwords. It can be easily guessed or cracked."
+                },
+                new BoolQuestion
+                {
+                    Question = "Antivirus software can help detect and remove malware.",
+                    Answer = true,
+                    Explanation = "Antivirus programs are designed to identify, block, and remove malware from your system."
+                },
+                new BoolQuestion
+                {
+                    Question = "Phishing attacks can only occur through email.",
+                    Answer = false,
+                    Explanation = "Phishing can happen via email, text messages, phone calls, or even social media messages."
+                },
+                new BoolQuestion
+                {
+                    Question = "A firewall can help block unauthorized access to your network.",
+                    Answer = true,
+                    Explanation = "Firewalls act as a barrier between your network and potential threats from outside sources."
+                },
+                new BoolQuestion
+                {
+                    Question = "It's safe to use public Wi-Fi for online banking without a VPN.",
+                    Answer = false,
+                    Explanation = "Public Wi-Fi networks are insecure, and without a VPN, your data can be intercepted by attackers."
+                },
+                new BoolQuestion
+                {
+                    Question = "Ransomware can encrypt your files and demand payment.",
+                    Answer = true,
+                    Explanation = "Ransomware locks your files with encryption and demands payment to provide the decryption key."
+                },
+                new BoolQuestion
+                {
+                    Question = "Two-factor authentication adds an extra layer of security.",
+                    Answer = true,
+                    Explanation = "2FA adds a second form of identity verification, making it harder for attackers to access your account."
+                },
+                new BoolQuestion
+                {
+                    Question = "HTTPS is less secure than HTTP.",
+                    Answer = false,
+                    Explanation = "HTTPS is more secure than HTTP because it encrypts the data sent between your browser and the server."
+                },
+                new BoolQuestion
+                {
+                    Question = "It's okay to reuse the same password across multiple sites.",
+                    Answer = false,
+                    Explanation = "Reusing passwords makes you vulnerable to credential stuffing attacks if one site is compromised."
+                },
+                new BoolQuestion
+                {
+                    Question = "Software updates can fix security vulnerabilities.",
+                    Answer = true,
+                    Explanation = "Updates often include patches for known security flaws, protecting your system from exploits."
+                }
+            };
+        }
+
+
+        //================================================//
+        // Populates RoundQuestions with five random
+        // multiple choice and five random true/false 
+        // questions
+        public void SetRoundQuestions()
+        {
+            // get 5 random questions of each type
+            var multipleChoice = _multipleChoiceQuestions.OrderBy(q => _rand.Next()).Take(5);
+            var trueFalse = _boolQuestions.OrderBy(q =>  _rand.Next()).Take(5);
+            var roundQuestions = new List<object>();
+
+            foreach(var q in multipleChoice)
+            {
+                roundQuestions.Add(q);
+            }
+
+            foreach (var q in trueFalse)
+            {
+                roundQuestions.Add(q);
+            }
+            // shuffle questions
+            RoundQuestions = roundQuestions.OrderBy(q => _rand.Next()).Take(10).ToList();
+        }
+
+
+        //================================================//
+        // Returns the score (%) of the latest quiz round
+        public double GetRoundScore()
+        {
+            return CorrectAnswers / (RoundQuestions.Count / 100);
         }
     }
 }

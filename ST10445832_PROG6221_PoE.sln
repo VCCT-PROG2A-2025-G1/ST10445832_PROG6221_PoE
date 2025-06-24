@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156
+VisualStudioVersion = 17.13.36105.23 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ST10445832_PROG6221_PoE", "ST10445832_PROG6221_PoE.csproj", "{4B674028-F4D2-4274-A949-2CAA2E0CD8E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ST10445832_PROG6221_PoE", "ST10445832_PROG6221_PoE.csproj", "{FDC83AE3-7FCB-4409-9D39-3DA39A4AEDE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4B674028-F4D2-4274-A949-2CAA2E0CD8E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B674028-F4D2-4274-A949-2CAA2E0CD8E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B674028-F4D2-4274-A949-2CAA2E0CD8E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B674028-F4D2-4274-A949-2CAA2E0CD8E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDC83AE3-7FCB-4409-9D39-3DA39A4AEDE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDC83AE3-7FCB-4409-9D39-3DA39A4AEDE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDC83AE3-7FCB-4409-9D39-3DA39A4AEDE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDC83AE3-7FCB-4409-9D39-3DA39A4AEDE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7C6F585A-B8CE-47C9-BCA2-6BE7B62DE6E1}
+		SolutionGuid = {5F3EC2AE-8432-40E3-977C-595AC65FB394}
 	EndGlobalSection
 EndGlobal
