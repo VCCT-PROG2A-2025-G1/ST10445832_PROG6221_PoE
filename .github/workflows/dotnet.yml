@@ -16,12 +16,20 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.x' # Or your specific .NET version, e.g., '6.x', '7.x'
+        dotnet-version: '8.x' # <--- IMPORTANT: Ensure this matches your project's target .NET version!
+
+    - name: Verify dotnet installation
+      run: dotnet --version # This will check if the 'dotnet' command is available
 
     - name: Restore NuGet packages
+      # If your project uses PackageReference (SDK-style project), you typically use 'dotnet restore'
+      # If using packages.config, 'nuget restore' is correct.
+      # For modern .NET projects, 'dotnet restore' is more common and often implicitly done by 'dotnet build'.
       run: nuget restore ST10445832_PROG6221_PoE.sln
 
     - name: Build with MSBuild
+      # Consider using 'dotnet build' instead of 'msbuild' for SDK-style projects.
+      # 'dotnet build' implicitly calls MSBuild and handles the SDK setup more gracefully.
       run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Check Formatting
