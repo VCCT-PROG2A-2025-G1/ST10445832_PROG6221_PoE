@@ -1,4 +1,5 @@
-name: Build and Format Check (.NET Framework 4.8)
+# Written with Gemini
+name: Build and Validate Code Formatting
 
 on:
   push:
