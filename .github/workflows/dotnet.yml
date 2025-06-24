@@ -27,6 +27,7 @@ jobs:
     - name: Restore NuGet packages
       # Restores all NuGet packages required by the solution.
       # The '-NoCache' flag prevents caching issues in CI environments.
+      shell: pwsh # Explicitly use PowerShell Core for this step
       run: nuget restore ST10445832_PROG6221_PoE.sln
 
     - name: Build application
@@ -34,6 +35,7 @@ jobs:
       # The /p:Configuration=Release sets the build configuration to Release.
       # The /p:Platform="Any CPU" sets the target platform.
       # Adjust these parameters if your project uses different configurations/platforms.
+      shell: pwsh # Explicitly use PowerShell Core for this step
       run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
 
     - name: Setup .NET SDK for dotnet format
@@ -41,7 +43,7 @@ jobs:
       # This step installs a recent .NET SDK to use 'dotnet format'.
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.x' # Use a recent .NET SDK version
+        dotnet-version: '8.0.x' # Use a recent .NET SDK version
 
     - name: Check code format
       # Runs 'dotnet format' in check-only mode.
