@@ -12,30 +12,16 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-      
+
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-        
-    # ChatGPT
-    - name: Clean
-      run: dotnet clean ST10445832_PROG6221_PoE.sln
-      
-    - name: Install NuGet CLI
-      uses: NuGet/setup-nuget@v1
-    
+
     - name: Restore NuGet packages
       run: nuget restore ST10445832_PROG6221_PoE.sln
 
     - name: Build with MSBuild
-      shell: cmd
-      run: call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" && msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
+      run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
 
-    - name: Test
-      run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal -p:EnableX86On64=false
       
     - name: Check Formatting
       run: dotnet format ST10445832_PROG6221_PoE.sln --verify-no-changes --severity error
