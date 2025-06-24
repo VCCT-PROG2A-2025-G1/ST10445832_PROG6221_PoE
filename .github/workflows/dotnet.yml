@@ -31,13 +31,13 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ST10445832_PROG6221_PoE.sln
       
+      # ChatGPT
     - name: Build
-      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore
+      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore -p:EnableX86On64=false -p:UseHostCompilerIfAvailable=false
       
     - name: Test
-      run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal
+      run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal -p:EnableX86On64=false
       
-      # ChatGPT
     - name: Check Formatting
       run: dotnet format ST10445832_PROG6221_PoE.sln --verify-no-changes --severity error
       # End ChatGPT
