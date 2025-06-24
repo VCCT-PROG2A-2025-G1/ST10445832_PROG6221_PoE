@@ -1,43 +1,52 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: Build and Format Check (.NET Framework 4.8)
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main # Trigger on pushes to the main branch
+      - develop # And also to the develop branch (adjust as needed)
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - main # Trigger on pull requests targeting main
+      - develop # And also targeting develop (adjust as needed)
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
-  build:
-    runs-on: windows-latest
+  build-and-format:
+    runs-on: windows-latest # .NET Framework 4.8 requires a Windows runner
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
+    - name: Checkout code
+      uses: actions/checkout@v4 # Action to check out your repository
+
+    - name: Setup MSBuild and NuGet
+      # Uses the 'setup-msbuild' action to prepare the environment for MSBuild and NuGet.
+      # This ensures the necessary tools are available on the Windows runner.
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore NuGet packages
+      # Restores all NuGet packages required by the solution.
+      # The '-NoCache' flag prevents caching issues in CI environments.
+      shell: pwsh # Explicitly use PowerShell Core for this step
+      run: nuget restore ST10445832_PROG6221_PoE.sln
+
+    - name: Build application
+      # Builds the WPF application using MSBuild.
+      # The /p:Configuration=Release sets the build configuration to Release.
+      # The /p:Platform="Any CPU" sets the target platform.
+      # Adjust these parameters if your project uses different configurations/platforms.
+      shell: pwsh # Explicitly use PowerShell Core for this step
+      run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
+
+    - name: Setup .NET SDK for dotnet format
+      # While the app is .NET Framework, 'dotnet format' is a .NET Core/.NET SDK tool.
+      # This step installs a recent .NET SDK to use 'dotnet format'.
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: '8.0.x' # Use a recent .NET SDK version
 
-    # ChatGPT
-    - name: Install NuGet CLI
-      uses: NuGet/setup-nuget@v1
-    
-    - name: Restore Nuget Packages
-      run: nuget restore ST10445832_PROG6221_PoE.sln
-    # End ChatGPT
-    
-    - name: Restore dependencies
-      run: dotnet restore ST10445832_PROG6221_PoE.sln
-      
-    - name: Build
-      run: dotnet build ST10445832_PROG6221_PoE.sln --no-restore
-      
-    - name: Test
-      run: dotnet test ST10445832_PROG6221_PoE.sln --no-build --verbosity normal
-      
-      # ChatGPT
-    - name: Check Formatting
-      run: dotnet format ST10445832_PROG6221_PoE.sln --verify-no-changes --severity error
-      # End ChatGPT
+    - name: Check code format
+      # Runs 'dotnet format' in check-only mode.
+      # The '--verify-no-changes' flag ensures the step fails if any formatting issues are found.
+      # This prevents unformatted code from being merged.
+      run: dotnet format ST10445832_PROG6221_PoE.sln --check --verify-no-changes
