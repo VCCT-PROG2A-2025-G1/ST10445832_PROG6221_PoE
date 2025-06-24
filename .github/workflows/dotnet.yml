@@ -16,20 +16,23 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.x' # <--- IMPORTANT: Ensure this matches your project's target .NET version!
+        dotnet-version: '8.x' # <--- CRITICAL: Set this to your exact .NET version, e.g., '6.0.x', '7.0.x', '8.0.x'
+                              # Using a specific patch version like '8.0.1' might be safer than '8.x' if issues persist.
 
-    - name: Verify dotnet installation
-      run: dotnet --version # This will check if the 'dotnet' command is available
+    - name: Verify dotnet CLI is on PATH
+      run: |
+        echo "PATH: %PATH%"
+        dotnet --version
+        where msbuild # On Windows, 'where' is like 'which' on Linux/macOS
 
     - name: Restore NuGet packages
-      # If your project uses PackageReference (SDK-style project), you typically use 'dotnet restore'
-      # If using packages.config, 'nuget restore' is correct.
-      # For modern .NET projects, 'dotnet restore' is more common and often implicitly done by 'dotnet build'.
+      # For SDK-style projects, 'dotnet restore' is generally preferred and often implicitly run by 'dotnet build'.
+      # If your project uses packages.config, 'nuget restore' is correct.
       run: nuget restore ST10445832_PROG6221_PoE.sln
 
     - name: Build with MSBuild
-      # Consider using 'dotnet build' instead of 'msbuild' for SDK-style projects.
-      # 'dotnet build' implicitly calls MSBuild and handles the SDK setup more gracefully.
+      # For SDK-style projects, consider using 'dotnet build' as it wraps MSBuild and handles the SDK setup better.
+      # If your project is not SDK-style, keep msbuild directly.
       run: msbuild ST10445832_PROG6221_PoE.sln /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Check Formatting
