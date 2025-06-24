@@ -7,9 +7,6 @@
   - Open ST10445832_PROG6221_Part1.sln in Visual Studio
   - Tools -> NuGet Package Manager -> Manage NuGet Packages for solution
   - Browse and install FuzzSharp if not under 'installed' tab
-- Nuget Package: CommunityToolkit.Mvvm by Microsoft
-- Nuget Package: MaterialDesignColors by James Willock
-- Nuget Package: MaterialDesignThemes by James Willock
 
 ## SecWiz Usage
 __IMPORTANT__: reducing the console window width will mess up the UI, though the application functionality will remain.
@@ -38,5 +35,4 @@ Use __Enter__ to select the highlighted option.
 
 ## SecWiz Walkthrough/Demonstration
 Part 1: [https://youtu.be/hN8oyaWWZ0A] <br>
-Part 2: [https://youtu.be/91BsgoXmWG8] <br>
-Part 3: 
+Part 2: [https://youtu.be/91BsgoXmWG8]
