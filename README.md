@@ -31,8 +31,8 @@ You can you your mouse or TAB and Enter keys to navigate the UI.
 > SecWiz: Goodbye >username<
 - To begin the Quiz you can type _I want to play the quiz_. SecWiz will tell you the game instructions and then ask you when you want to start. Replying with _ready_ will start the quiz.
 - To create a new task reminder type _Remind me to <task> <time period> from now_
-> User: reminde me to update my password 20 minutes from now.
-> SecWiz: Task created!
+> User: reminde me to update my password 20 minutes from now. <br>
+> SecWiz: Task created! <br>
 > Task: 'update my password', Reminder: 2025/06/25 12:30:00
 - View a history of recent significant events with _show activity log_.
 
