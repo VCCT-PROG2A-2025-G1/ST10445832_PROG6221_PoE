@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace ST10445832_PROG6221_PoE.Classes
@@ -1055,7 +1054,14 @@ namespace ST10445832_PROG6221_PoE.Classes
         // Returns the score (%) of the latest quiz round
         public double GetRoundScore()
         {
-            return CorrectAnswers / (RoundQuestions.Count / 100);
+            if (CorrectAnswers > 0)
+            {
+                return CorrectAnswers / ((double)RoundQuestions.Count / 100);
+            }
+            else
+            {
+                return 0.0;
+            }
         }
     }
 }
