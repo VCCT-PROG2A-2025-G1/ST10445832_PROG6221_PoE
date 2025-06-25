@@ -12,11 +12,11 @@
 - Nuget Package: MaterialDesignThemes by James Willock
 
 ## SecWiz Usage
-__IMPORTANT__: reducing the console window width will mess up the UI, though the application functionality will remain.
+- For many commands, there is some flexibility in how you can make them, the examples below aren't necessarily the only way of doing things.
+- At any point during a quiz round or task action, you can type _cancel_ to abort the process.
 
-### Main Menu
-Highlight the menu option you would like to select using __ArrowLeft__ and __ArrowRight__.
-Use __Enter__ to select the highlighted option.
+### Navigation
+You can you your mouse or TAB and Enter keys to navigate the UI.
 
 ### Chat
 - After selecting _CHAT_ in the main menu you will be prompted to ask a question.
@@ -29,6 +29,13 @@ Use __Enter__ to select the highlighted option.
 > User: Goodbye! <br>
 > SecWiz: Thanks for Chatting! <br>
 > SecWiz: Goodbye >username<
+- To begin the Quiz you can type _I want to play the quiz_. SecWiz will tell you the game instructions and then ask you when you want to start. Replying with _ready_ will start the quiz.
+- To create a new task reminder type _Remind me to >task< >time period< from now_
+> User: reminde me to update my password 20 minutes from now. <br>
+> SecWiz: Task created! <br>
+> Task: 'update my password', Reminder: 2025/06/25 12:30:00
+- View a history of recent significant events with _show activity log_.
+
 ### Help
 - The help option in the main menu provides you with some information about SecWiz and how to use it.
 
