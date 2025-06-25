@@ -28,6 +28,7 @@
     </Window.Resources>
 
     <Grid>
+        <!-- Boot -->
         <StackPanel x:Name="BootPanel">
 
             <Image x:Name="BootImage"
@@ -38,10 +39,10 @@
                 </Image.RenderTransform>
             </Image>
 
-            <MediaElement x:Name="WelcomeGreeting" Source="SecWizTelephone.wav" LoadedBehavior="Play" MediaFailed="WelcomeGreeting_MediaFailed"  MediaEnded="BootPanel_Ended" />
+            <MediaElement x:Name="WelcomeGreeting" Source="SecWizTelephone.wav" LoadedBehavior="Play"  MediaEnded="BootPanel_Ended" />
         </StackPanel>
 
-
+        <!-- Intro -->
         <Grid x:Name="IntroPanel">
             <Label Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
@@ -61,7 +62,7 @@
             </Grid.RenderTransform>
         </Grid>
 
-
+        <!-- Welcome -->
         <Grid x:Name="WelcomePanel">
             <Label Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
             <Label x:Name="UserWelcomeLabel" Content="Welcome demo string!"
@@ -72,7 +73,7 @@
             </Grid.RenderTransform>
         </Grid>
 
-
+        <!-- Menu -->
         <Grid x:Name="MenuPanel">
             <Label Content="SecWiz 3.0" Visibility="Visible" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
@@ -95,7 +96,7 @@
             </Grid.RenderTransform>
         </Grid>
 
-
+        <!-- Chat -->
         <Grid x:Name="ChatPanel">
             <Grid.RowDefinitions>
                 <RowDefinition Height="54" />
@@ -140,6 +141,7 @@
             </DockPanel>
         </Grid>
 
+        <!-- Help -->
         <Grid x:Name="HelpPanel">
             <Grid.RowDefinitions>
                 <RowDefinition Height="54" />

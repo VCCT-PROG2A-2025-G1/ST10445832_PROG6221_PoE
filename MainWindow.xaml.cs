@@ -138,6 +138,9 @@ namespace ST10445832_PROG6221_PoE
             SendMessageBtn.IsEnabled = true;
         }
 
+
+        //================================================================================//
+        // Facilitates the smooth transition between views
         private void ChangeViewSwipe(Panel current, Panel next)
         {
             Storyboard swipeIn = ((Storyboard)FindResource("ScreenSwipeIn")).Clone();
@@ -160,11 +163,6 @@ namespace ST10445832_PROG6221_PoE
             swipeOut.Begin();
             swipeIn.Begin();
             next.Visibility = Visibility.Visible;
-        }
-
-        private void WelcomeGreeting_MediaFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            Debug.WriteLine("MEDIA FAIL");
         }
 
 
