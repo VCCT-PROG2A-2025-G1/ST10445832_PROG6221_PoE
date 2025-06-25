@@ -45,4 +45,5 @@ You can you your mouse or TAB and Enter keys to navigate the UI.
 
 ## SecWiz Walkthrough/Demonstration
 Part 1: [https://youtu.be/hN8oyaWWZ0A] <br>
-Part 2: [https://youtu.be/91BsgoXmWG8]
+Part 2: [https://youtu.be/91BsgoXmWG8] <br>
+Part 3: [https://youtu.be/L7R62doY20M]
